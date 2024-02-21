@@ -4,15 +4,6 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# a = np.random.random(100)
-#
-# plt.plot(a)
-# plt.title('Akciju linija')
-# plt.xlabel('Kaina')
-# plt.ylabel('Linija')
-# plt.plot(a, color='red')
-# plt.show()
-
 dates = pd.date_range('20190214', periods=6)
 numbers = np.matrix([[101, 103], [105.5, 75], [102, 80.3], [100, 85], [110, 98], [109.6, 125.7]])
 df = pd.DataFrame(numbers, index=dates, columns=['A', 'B'])
@@ -83,4 +74,60 @@ a = np.random.randint(low=1, high=10, size=10)
 b = a[a <= 6]
 print(a)
 print(b)
+
+print("\n4. Dviejų vienodų šalia esančių radimas")
+a = np.random.randint(1, 6, size=10)
+print(f"a = {a}")
+for i in range(1, len(a)):
+    if a[i] == a[i-1]:
+        print(i)
+
+print("\n5. Elementų, kur a elementai didesni už b elementus, radimas")
+a = np.random.randn(10)
+b = np.random.randn(10)
+for i in range(len(a)):
+    if a[i] > b[i]:
+        print(i)
+
+print("\n6. Elementų perstūmimas vektoriuje, pakartojant paskutinį")
+a = np.random.randint(1, 11, size=10)
+print(a)
+for i in range(1, len(a)):
+    a[i-1] = a[i]
+print(a)
+
+print("\n7. Sukeitimas elementų eilės tvarkos")
+a = np.random.randint(1, 11, size=10)
+print(a)
+for i in range(len(a) // 2):
+    b = a[i]
+    a[i] = a[len(a) - i - 1]
+    a[len(a) - i - 1] = b
+print(a)
+
+print("\n8. Kas antro elemento užnulinimas")
+a = np.random.randint(1, 11, size=10)
+print(a)
+for i in range(0, len(a), 2):
+    a[i] = 0
+print(a)
+
+print("\n9. Rasti matricos eilučių vidurkius, rasti matricos stulpelių vidurkius")
+a = np.random.randn(10, 20)
+# Eilučių vidurkiai
+print("Eilučių vidurkiai:")
+for i in range(a.shape[0]):
+    print(np.mean(a[i, :]))
+
+# Stulpelių vidurkiai
+print("Stulpelių vidurkiai:")
+for j in range(a.shape[1]):
+    print(np.mean(a[:, j]))
+
+print("\n10. Gauti matricos diagonalinius elementus (be diag funkcijos)")
+a = np.random.randint(1, 11, size=(10, 10))
+for i in range(a.shape[0]):
+    print(a[i, i])
+
+
 
