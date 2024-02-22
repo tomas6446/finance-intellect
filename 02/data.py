@@ -1,5 +1,6 @@
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
+import mplfinance as mpf
 import numpy as np
 import pandas as pd
 
@@ -62,27 +63,28 @@ def plot_data(data, plot_type='line', title='Stock Data', add_sessions=False):
         # Formatting the plot
         format_plot(ax, title)
 
-    elif plot_type == 'line':
-        fig, ax = plt.subplots(figsize=(14, 7))
-
-        # Plot the Close price line chart
-        ax.plot(data.index, data['Close'], label='Close Price', color='blue', linewidth=1)
-
-        # Add volume plot below if volume data is available
+    # Plot a candlestick chart using mplfinance for 'candle' plot type
+    elif plot_type == 'candle':
+        # Configure the plot style and type
+        plot_kwargs = {
+            'type': 'candle',
+            'style': 'charles',
+            'title': title,
+            'figratio': (14, 7),
+            'figscale': 1
+        }
+        # Check if volume data is available for a candlestick plot
         if 'Volume' in data.columns:
-            volume_ax = ax.twinx()
-            volume_ax.bar(data.index, data['Volume'], width=0.0005, alpha=0.3, color='orange')
-            volume_ax.set_ylabel('Volume', color='orange')
-            volume_ax.tick_params(axis='y', labelcolor='orange')
-            volume_ax.set_yscale('log')  # Use logarithmic scale for volume if needed
-
-        # Add session shading
-        if add_sessions:
-            ax.axvline(x=pd.Timestamp('09:30').time(), color='black', linestyle='--')
-            ax.axvline(x=pd.Timestamp('16:00').time(), color='black', linestyle='--')
-
-        # Formatting the plot
-        format_plot(ax, title)
+            plot_kwargs['volume'] = True
+            if add_sessions:
+                # Define the market hours for session shading
+                market_hours = data.between_time('09:30', '16:00')
+                # Create an additional plot for volume
+                apdict = mpf.make_addplot(market_hours['Volume'], type='bar', panel=1, color='orange', ylabel='Volume')
+                plot_kwargs['addplot'] = [apdict]
+                plot_kwargs['panel_ratios'] = (3, 1)
+        # Plot the candlestick chart
+        mpf.plot(data, **plot_kwargs)
 
 
 def format_plot(ax, title):
