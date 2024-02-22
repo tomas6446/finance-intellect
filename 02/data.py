@@ -1,8 +1,8 @@
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
 import mplfinance as mpf
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
 
 
 def load_data(file_path, date_col=None, time_col=None, parse_dates=True, index_col=None):
@@ -27,47 +27,85 @@ def load_data(file_path, date_col=None, time_col=None, parse_dates=True, index_c
     return data
 
 
-def plot_data(data, plot_type='line', title='Stock Data'):
+def plot_data(data, plot_type='line', title='Stock Data', add_sessions=False):
     """
-    Plots the data as either a line chart or a candlestick chart, with an optional volume panel.
+    Plots the data as either a line chart or a candlestick chart, with an optional volume panel and session shading.
 
     Parameters:
     - data: The pandas DataFrame with the stock data.
     - plot_type: The type of plot ('line' or 'candle'). Default is 'line'.
     - title: The title of the plot. Default is 'Stock Data'.
+    - add_sessions: Boolean flag to add session shading. Default is False.
     """
+    def plot_data(data, plot_type='line', title='Stock Data', add_sessions=False):
+        """
+        Plots the data as either a line chart or a candlestick chart, with an optional volume panel and session shading.
+
+        Parameters:
+        - data: The pandas DataFrame with the stock data.
+        - plot_type: The type of plot ('line' or 'candle'). Default is 'line'.
+        - title: The title of the plot. Default is 'Stock Data'.
+        - add_sessions: Boolean flag to add session shading. Default is False.
+        """
     # Plot a line chart using matplotlib for 'line' plot type
     if plot_type == 'line':
-        plt.figure(figsize=(14, 7))
-        plt.plot(data.index, data['Close'], label='Close Price', color='blue', linewidth=1)
-        plt.title(title)
-        plt.xlabel('DateTime')
-        plt.ylabel('Close Price')
-        plt.xticks(rotation=45)
-        plt.gca().xaxis.set_major_locator(mdates.HourLocator(interval=1))
-        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
-        plt.tight_layout()
-        plt.legend()
-        plt.show()
-    # Plot a candlestick chart using mplfinance for 'candle' plot type
-    else:
-        # Check if required columns are available
-        required_columns = ['Open', 'High', 'Low', 'Close']
-        if not all(col in data.columns for col in required_columns):
-            raise ValueError(f"Data must contain {required_columns} for candlestick plot.")
-        # Configure the plot style and type
-        plot_kwargs = {
-            'type': 'candle',
-            'style': 'charles',
-            'title': title,
-            'figratio': (14, 7),
-            'figscale': 1
-        }
-        # Check if volume data is available for a candlestick plot
+        fig, ax = plt.subplots(figsize=(14, 7))
+
+        # Plot the Close price line chart
+        ax.plot(data.index, data['Close'], label='Close Price', color='blue', linewidth=1)
+
+        # Add volume plot below if volume data is available
         if 'Volume' in data.columns:
-            plot_kwargs['volume'] = True
-        # Plot the candlestick chart
-        mpf.plot(data, **plot_kwargs)
+            volume_ax = ax.twinx()
+            volume_ax.bar(data.index, data['Volume'], width=0.0005, alpha=0.3, color='orange')
+            volume_ax.set_ylabel('Volume', color='orange')
+            volume_ax.tick_params(axis='y', labelcolor='orange')
+
+        # Add session shading
+        if add_sessions:
+            unique_dates = np.unique(data.index.date)
+            for date in unique_dates:
+                start_time = pd.Timestamp.combine(date, pd.Timestamp('09:30').time())
+                end_time = pd.Timestamp.combine(date, pd.Timestamp('16:00').time())
+                ax.axvline(x=start_time, color='black', linestyle='--')
+                ax.axvline(x=end_time, color='black', linestyle='--')
+
+        # Formatting the plot
+        format_plot(ax, title)
+
+    elif plot_type == 'line':
+        fig, ax = plt.subplots(figsize=(14, 7))
+
+        # Plot the Close price line chart
+        ax.plot(data.index, data['Close'], label='Close Price', color='blue', linewidth=1)
+
+        # Add volume plot below if volume data is available
+        if 'Volume' in data.columns:
+            volume_ax = ax.twinx()
+            volume_ax.bar(data.index, data['Volume'], width=0.0005, alpha=0.3, color='orange')
+            volume_ax.set_ylabel('Volume', color='orange')
+            volume_ax.tick_params(axis='y', labelcolor='orange')
+            volume_ax.set_yscale('log')  # Use logarithmic scale for volume if needed
+
+        # Add session shading
+        if add_sessions:
+            ax.axvline(x=pd.Timestamp('09:30').time(), color='black', linestyle='--')
+            ax.axvline(x=pd.Timestamp('16:00').time(), color='black', linestyle='--')
+
+        # Formatting the plot
+        format_plot(ax, title)
+
+
+def format_plot(ax, title):
+    ax.set_title(title)
+    ax.set_xlabel('DateTime')
+    ax.set_ylabel('Close Price')
+    ax.legend()
+    ax.xaxis.set_major_locator(mdates.HourLocator(interval=1))
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.show()
 
 
 def generate_market_data(initial_price=100, num_points=1000, volatility=0.1):
@@ -110,7 +148,7 @@ plot_data(tick_data, title='TSLA Tick Data: Close Price Over Time')
 minute_data = load_data('../data/one_minute_tsla.csv', date_col='Date', time_col='Time')
 print("Minute data:")
 print(minute_data.head())
-plot_data(minute_data, title='TSLA Minute Data: Close Price Over Time')
+plot_data(minute_data, title='TSLA Minute Data: Close Price Over Time', add_sessions=True)
 
 # Generate and plot random walk market data
 market_data = generate_market_data(initial_price=100, num_points=1000, volatility=0.1)
