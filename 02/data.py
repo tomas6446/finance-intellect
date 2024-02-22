@@ -1,6 +1,5 @@
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
-import mplfinance as mpf
 import numpy as np
 import pandas as pd
 
@@ -37,16 +36,6 @@ def plot_data(data, plot_type='line', title='Stock Data', add_sessions=False):
     - title: The title of the plot. Default is 'Stock Data'.
     - add_sessions: Boolean flag to add session shading. Default is False.
     """
-    def plot_data(data, plot_type='line', title='Stock Data', add_sessions=False):
-        """
-        Plots the data as either a line chart or a candlestick chart, with an optional volume panel and session shading.
-
-        Parameters:
-        - data: The pandas DataFrame with the stock data.
-        - plot_type: The type of plot ('line' or 'candle'). Default is 'line'.
-        - title: The title of the plot. Default is 'Stock Data'.
-        - add_sessions: Boolean flag to add session shading. Default is False.
-        """
     # Plot a line chart using matplotlib for 'line' plot type
     if plot_type == 'line':
         fig, ax = plt.subplots(figsize=(14, 7))
