@@ -1,8 +1,8 @@
-import matplotlib.dates as mdates
-import matplotlib.pyplot as plt
 import mplfinance as mpf
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 
 
 def load_data(file_path, date_col=None, time_col=None, parse_dates=True, index_col=None):
@@ -29,17 +29,15 @@ def load_data(file_path, date_col=None, time_col=None, parse_dates=True, index_c
 
 def plot_data(data, plot_type='line', title='Stock Data'):
     """
-    Plots the data as either a line chart or a candlestick chart.
+    Plots the data as either a line chart or a candlestick chart, with an optional volume panel.
 
     Parameters:
     - data: The pandas DataFrame with the stock data.
     - plot_type: The type of plot ('line' or 'candle'). Default is 'line'.
     - title: The title of the plot. Default is 'Stock Data'.
     """
-    if plot_type == 'candle':
-        volume_available = 'Volume' in data.columns
-        mpf.plot(data, type='candle', style='charles', title=title, volume=volume_available)
-    else:
+    # Plot a line chart using matplotlib for 'line' plot type
+    if plot_type == 'line':
         plt.figure(figsize=(14, 7))
         plt.plot(data.index, data['Close'], label='Close Price', color='blue', linewidth=1)
         plt.title(title)
@@ -51,6 +49,25 @@ def plot_data(data, plot_type='line', title='Stock Data'):
         plt.tight_layout()
         plt.legend()
         plt.show()
+    # Plot a candlestick chart using mplfinance for 'candle' plot type
+    else:
+        # Check if required columns are available
+        required_columns = ['Open', 'High', 'Low', 'Close']
+        if not all(col in data.columns for col in required_columns):
+            raise ValueError(f"Data must contain {required_columns} for candlestick plot.")
+        # Configure the plot style and type
+        plot_kwargs = {
+            'type': 'candle',
+            'style': 'charles',
+            'title': title,
+            'figratio': (14, 7),
+            'figscale': 1
+        }
+        # Check if volume data is available for a candlestick plot
+        if 'Volume' in data.columns:
+            plot_kwargs['volume'] = True
+        # Plot the candlestick chart
+        mpf.plot(data, **plot_kwargs)
 
 
 def generate_market_data(initial_price=100, num_points=1000, volatility=0.1):
