@@ -15,9 +15,6 @@ def load_data(file_path, date_col=None, time_col=None, parse_dates=True, index_c
     - time_col: Column name for the time.
     - parse_dates: Whether to parse dates. Default is True.
     - index_col: Column to set as index. Default is None.
-
-    Returns:
-    - A pandas DataFrame with the loaded data.
     """
     data = pd.read_csv(file_path, parse_dates=parse_dates, index_col=index_col)
     if date_col and time_col:
@@ -73,16 +70,6 @@ def plot_data(data, plot_type='line', title='Stock Data', add_sessions=False):
             'figratio': (14, 7),
             'figscale': 1
         }
-        # Check if volume data is available for a candlestick plot
-        if 'Volume' in data.columns:
-            plot_kwargs['volume'] = True
-            if add_sessions:
-                # Define the market hours for session shading
-                market_hours = data.between_time('09:30', '16:00')
-                # Create an additional plot for volume
-                apdict = mpf.make_addplot(market_hours['Volume'], type='bar', panel=1, color='orange', ylabel='Volume')
-                plot_kwargs['addplot'] = [apdict]
-                plot_kwargs['panel_ratios'] = (3, 1)
         # Plot the candlestick chart
         mpf.plot(data, **plot_kwargs)
 
@@ -107,9 +94,6 @@ def generate_market_data(initial_price=100, num_points=1000, volatility=0.1):
     - initial_price: The starting price of the stock.
     - num_points: The number of data points to generate.
     - volatility: The volatility of the stock price, affecting the magnitude of price changes.
-
-    Returns:
-    - A pandas DataFrame with the generated market price data.
     """
     # Generate random price changes
     price_changes = np.random.randn(num_points) * volatility
