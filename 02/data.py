@@ -103,6 +103,46 @@ def generate_market_data(initial_price=100, num_points=1000, volatility=0.1):
     return data
 
 
+def convert_timediff_to_seconds(largest_gaps):
+    largest_gaps.dropna(inplace=True)
+    # Convert time differences to seconds
+    largest_gaps['Time_Diff'] = largest_gaps['Time_Diff'].dt.total_seconds()
+    return largest_gaps
+
+
+def biggest_gap(data, gap_number=10):
+    data['Time_Diff'] = data.index.to_series().diff()
+    # Sort to find the largest gaps
+    largest_gaps = data.nlargest(gap_number, 'Time_Diff')
+    # Return the rows corresponding to the gaps
+    return largest_gaps[['Time_Diff']]
+
+
+def plot_gaps(data, largest_gaps, title):
+    fig, ax = plt.subplots(figsize=(14, 7))
+
+    # Plot the Close price line chart
+    ax.plot(data.index, data['Close'], label='Close Price', color='blue', linewidth=1)
+
+    # Plot each gap as a vertical line
+    for gap_start, row in largest_gaps.iterrows():
+        gap_end = gap_start + pd.Timedelta(seconds=row['Time_Diff'])
+        plt.axvline(x=gap_start, color='red', linestyle='--', label='Gap Start')
+        plt.axvline(x=gap_end, color='green', linestyle='--', label='Gap End')
+
+    # Add labels and title
+    ax.set_title(title)
+    ax.set_xlabel('DateTime')
+    ax.set_ylabel('Close Price')
+
+    # Remove duplicate labels
+    handles, labels = plt.gca().get_legend_handles_labels()
+    by_label = dict(zip(labels, handles))
+    plt.legend(by_label.values(), by_label.keys())
+
+    plt.show()
+
+
 # Load and plot daily data
 daily_data = load_data('../data/day_tsla.csv', index_col='Date')
 print("Daily data:")
@@ -126,3 +166,8 @@ market_data = generate_market_data(initial_price=100, num_points=1000, volatilit
 print("Random walk market data:")
 print(market_data.head())
 plot_data(market_data, title='Random Walk Market Data: Close Price Over Time')
+
+# Find the biggest gaps in the minute data
+largest_gap = biggest_gap(minute_data, gap_number=10)
+largest_gaps_with_seconds = convert_timediff_to_seconds(largest_gap)
+plot_gaps(minute_data, largest_gaps_with_seconds, title='TSLA Minute Data: Close Price Over Time with Gaps')
