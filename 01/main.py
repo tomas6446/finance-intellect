@@ -18,7 +18,7 @@ row_datetime = df.loc[date_datetime]
 print(row_datetime)
 
 print('\n3. gauti eilutę, kuri yra priešpaskutinė nuo galo (nenaudoti indekso)')
-nuogalo = df.loc['2019-02-18']
+nuogalo = df.iloc[-2]
 print(nuogalo)
 
 print('\n4. gauti pirmas 2 eilutes ir stulpeli B (nenaudoti indekso)')
