@@ -101,7 +101,7 @@ def generate_market_data(initial_price=100, num_points=1000, volatility=0.1):
     prices = initial_price + np.cumsum(price_changes)
     # Generate a DataFrame
     data = pd.DataFrame(prices, columns=['Close'])
-    data['DateTime'] = pd.date_range(start='2024-01-01', periods=num_points, freq='min')  # Updated to use 'min'
+    data['DateTime'] = pd.date_range(start='2024-01-01', periods=num_points, freq='min')
     data.set_index('DateTime', inplace=True)
 
     return data
