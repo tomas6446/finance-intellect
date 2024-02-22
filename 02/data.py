@@ -58,7 +58,15 @@ def plot_data(data, plot_type='line', title='Stock Data', add_sessions=False):
                 ax.axvline(x=end_time, color='black', linestyle='--')
 
         # Formatting the plot
-        format_plot(ax, title)
+        ax.set_title(title)
+        ax.set_xlabel('DateTime')
+        ax.set_ylabel('Close Price')
+        ax.legend()
+        ax.xaxis.set_major_locator(mdates.HourLocator(interval=1))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
 
     # Plot a candlestick chart using mplfinance for 'candle' plot type
     elif plot_type == 'candle':
@@ -72,18 +80,6 @@ def plot_data(data, plot_type='line', title='Stock Data', add_sessions=False):
         }
         # Plot the candlestick chart
         mpf.plot(data, **plot_kwargs)
-
-
-def format_plot(ax, title):
-    ax.set_title(title)
-    ax.set_xlabel('DateTime')
-    ax.set_ylabel('Close Price')
-    ax.legend()
-    ax.xaxis.set_major_locator(mdates.HourLocator(interval=1))
-    ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
-    plt.xticks(rotation=45)
-    plt.tight_layout()
-    plt.show()
 
 
 def generate_market_data(initial_price=100, num_points=1000, volatility=0.1):
