@@ -103,71 +103,97 @@ def generate_market_data(initial_price=100, num_points=1000, volatility=0.1):
     return data
 
 
-def convert_timediff_to_seconds(largest_gaps):
-    largest_gaps.dropna(inplace=True)
-    # Convert time differences to seconds
-    largest_gaps['Time_Diff'] = largest_gaps['Time_Diff'].dt.total_seconds()
-    return largest_gaps
+def find_and_print_biggest_gaps(data, gap_number=10):
+    """
+    Finds and prints detailed information about the biggest gaps in time series data.
 
+    Parameters:
+    - data: A pandas DataFrame with a DateTime index.
+    - gap_number: Number of gaps to find.
+    """
+    # Ensure the data is sorted by the index to correctly calculate time differences
+    data = data.sort_index()
 
-def biggest_gap(data, gap_number=10):
+    # Calculate time differences between consecutive entries
     data['Time_Diff'] = data.index.to_series().diff()
-    # Sort to find the largest gaps
-    largest_gaps = data.nlargest(gap_number, 'Time_Diff')
-    # Return the rows corresponding to the gaps
-    return largest_gaps[['Time_Diff']]
+
+    # Identify gaps
+    gaps = data[data['Time_Diff'] > pd.Timedelta(minutes=1)].copy()
+    gaps['Gap_Length'] = gaps['Time_Diff']
+
+    # Sort the gaps by length to find the largest ones
+    biggest_gaps = gaps.nlargest(gap_number, 'Gap_Length')
+
+    print(f"The {gap_number} largest gaps in the data were:")
+    for i, (index, row) in enumerate(biggest_gaps.iterrows(), start=1):
+        gap_start = index - row['Time_Diff']
+        gap_end = index
+        print(f"{i}. Gap Length: {row['Gap_Length']}, Start: {gap_start}, End: {gap_end}")
+
+        # Optionally, print data points just before and after the gap for context
+        if gap_start in data.index:
+            print(f"    Data before the gap: {data.loc[gap_start]}")
+        else:
+            print("    Data before the gap is not available.")
+
+        if gap_end in data.index:
+            print(f"    Data after the gap: {data.loc[gap_end]}")
+        else:
+            print("    Data after the gap is not available.")
+
+    return gaps
 
 
-def plot_gaps(data, largest_gaps, title):
+def visualize_gaps_with_candlestick(data, gaps):
+    """
+    Visualizes gaps on a candlestick chart.
+
+    Parameters:
+    - data: The full pandas DataFrame with the stock data.
+    - gaps: A pandas DataFrame containing the gaps data, with 'Time_Diff' indicating the gap length.
+    """
+    mc = mpf.make_marketcolors(up='green', down='red', edge='inherit', wick='inherit')
+    s = mpf.make_mpf_style(marketcolors=mc, gridstyle='--')
+
     fig, ax = plt.subplots(figsize=(14, 7))
+    mpf.plot(data, type='candle', style=s, ax=ax, show_nontrading=True)
 
-    # Plot the Close price line chart
-    ax.plot(data.index, data['Close'], label='Close Price', color='blue', linewidth=1)
-
-    # Plot each gap as a vertical line
-    for gap_start, row in largest_gaps.iterrows():
-        gap_end = gap_start + pd.Timedelta(seconds=row['Time_Diff'])
-        plt.axvline(x=gap_start, color='red', linestyle='--', label='Gap Start')
-        plt.axvline(x=gap_end, color='green', linestyle='--', label='Gap End')
-
-    # Add labels and title
-    ax.set_title(title)
-    ax.set_xlabel('DateTime')
-    ax.set_ylabel('Close Price')
-
-    # Remove duplicate labels
-    handles, labels = plt.gca().get_legend_handles_labels()
-    by_label = dict(zip(labels, handles))
-    plt.legend(by_label.values(), by_label.keys())
+    for i, (start, gap) in enumerate(gaps.iterrows()):
+        end = start + gap['Time_Diff']  # Calculate the end of the gap
+        # Shift the shaded area back by the length of the gap to highlight the correct range
+        ax.axvspan(start - gap['Time_Diff'], end - gap['Time_Diff'], color='red', alpha=0.5)
+        # Add text annotation for the gap number
+        ax.text(start - gap['Time_Diff'], data['High'].max(), f'Gap {i + 1}', color='blue', fontsize=9)
 
     plt.show()
 
 
-# Load and plot daily data
-daily_data = load_data('../data/day_tsla.csv', index_col='Date')
-print("Daily data:")
-print(daily_data.head())
-plot_data(daily_data, plot_type='candle', title='TSLA Daily Data')
+def resample_data(data, frequency='1min'):
+    """
+    Resamples the tick data into bars of a specified frequency.
 
-# Load and plot tick data
-tick_data = load_data('../data/100_tick_tsla.csv', date_col='Date', time_col='Time')
-print("Tick data:")
-print(tick_data.head())
-plot_data(tick_data, title='TSLA Tick Data: Close Price Over Time')
+    Parameters:
+    - data: The pandas DataFrame with the tick data.
+    - frequency: The frequency for resampling ('1T' for 1-minute bars, '1H' for 1-hour bars, etc.).
+    """
+    data['Price'] = data['Up'].astype(float)
+    data['Volume'] = data['Down'].astype(int)
 
-# Load and plot minute data
-minute_data = load_data('../data/one_minute_tsla.csv', date_col='Date', time_col='Time')
-print("Minute data:")
-print(minute_data.head())
-plot_data(minute_data, title='TSLA Minute Data: Close Price Over Time', add_sessions=True)
+    # Resample the data according to the frequency
+    resampled_data = data.resample(frequency).agg({
+        'Open': 'first',
+        'High': 'max',
+        'Low': 'min',
+        'Close': 'last',
+        'Up': 'sum',
+        'Down': 'sum'
+    })
 
-# Generate and plot random walk market data
-market_data = generate_market_data(initial_price=100, num_points=1000, volatility=0.1)
-print("Random walk market data:")
-print(market_data.head())
-plot_data(market_data, title='Random Walk Market Data: Close Price Over Time')
+    # Create a 'Volume' column by summing 'Up' and 'Down'
+    resampled_data['Volume'] = resampled_data['Up'] + resampled_data['Down']
+    resampled_data.drop(columns=['Up', 'Down'], inplace=True)
 
-# Find the biggest gaps in the minute data
-largest_gap = biggest_gap(minute_data, gap_number=10)
-largest_gaps_with_seconds = convert_timediff_to_seconds(largest_gap)
-plot_gaps(minute_data, largest_gaps_with_seconds, title='TSLA Minute Data: Close Price Over Time with Gaps')
+    # Drop rows with NaN values, which represent periods with no ticks
+    resampled_data.dropna(inplace=True)
+
+    return resampled_data
