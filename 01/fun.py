@@ -21,6 +21,14 @@ def plot_data(data, dformat, plot_type='line', title='Stock Data', add_sessions=
     """
     Plots the data as either a line chart or a candlestick chart, with an optional volume panel and session shading.
     """
+    date_format = '%Y-%m-%d'
+    if dformat == 'daily':
+        date_format = '%Y-%m-%d'
+    if dformat == 'minute':
+        date_format = '%H:%M'
+    if dformat == 'tick':
+        date_format = '%H:%M:%S'
+
     # Plot a line chart using matplotlib for 'line' plot type
     if plot_type == 'line':
         fig, ax = plt.subplots(figsize=(14, 7))
@@ -45,9 +53,6 @@ def plot_data(data, dformat, plot_type='line', title='Stock Data', add_sessions=
                 ax.axvline(x=end_time, color='black', linestyle='--')
 
         # Formatting the plot
-        date_format = '%Y-%m-%d %H:%M:%S'
-        if dformat == 'minute' or dformat == 'tick':
-            date_format = '%H:%M:%S'
         ax.set_title(title)
         ax.set_xlabel('DateTime')
         ax.set_ylabel('Close Price')
@@ -65,7 +70,8 @@ def plot_data(data, dformat, plot_type='line', title='Stock Data', add_sessions=
             'style': 'charles',
             'title': title,
             'figratio': (14, 7),
-            'figscale': 1
+            'figscale': 1,
+            'datetime_format': date_format,
         }
         # Plot the candlestick chart
         mpf.plot(data, **plot_kwargs)
