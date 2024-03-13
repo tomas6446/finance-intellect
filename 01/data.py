@@ -1,32 +1,32 @@
-from fun import *
+import fun
 
 # Load and plot daily data
-daily_data = load_data('../data/day_tsla.csv', index_col='Date')
+daily_data = fun.load_data('../data/day_tsla.csv', index_col='Date')
 print("Daily data:")
 print(daily_data.head())
-plot_data(daily_data, plot_type='candle', title='TSLA Daily Data')
+fun.plot_data(daily_data, plot_type='candle', title='TSLA Daily Data')
 
 # Load and plot tick data
-tick_data = load_data('../data/100_tick_tsla.csv', date_col='Date', time_col='Time')
+tick_data = fun.load_data('../data/100_tick_tsla.csv', date_col='Date', time_col='Time')
 print("Tick data:")
 print(tick_data.head())
-plot_data(tick_data, plot_type='candle', title='TSLA Tick Data: Close Price Over Time')
+fun.plot_data(tick_data, plot_type='candle', title='TSLA Tick Data: Close Price Over Time')
 
 # Load and plot minute data
-minute_data = load_data('../data/one_minute_tsla.csv', date_col='Date', time_col='Time')
+minute_data = fun.load_data('../data/one_minute_tsla.csv', date_col='Date', time_col='Time')
 print("Minute data:")
 print(minute_data.head())
-plot_data(minute_data, title='TSLA Minute Data: Close Price Over Time', add_sessions=True)
+fun.plot_data(minute_data, title='TSLA Minute Data: Close Price Over Time', add_sessions=True)
 
 # Generate and plot random walk market data
-market_data = generate_market_data(initial_price=100, num_points=1000, volatility=0.1)
+market_data = fun.generate_market_data(initial_price=100, num_points=1000, volatility=0.1)
 print("Random walk market data:")
 print(market_data.head())
-plot_data(market_data, title='Random Walk Market Data: Close Price Over Time')
+fun.plot_data(market_data, title='Random Walk Market Data: Close Price Over Time')
 
 # Find the biggest gaps in the minute data
-biggest_gaps = find_and_print_biggest_gaps(minute_data)
-visualize_gaps_with_candlestick(minute_data, biggest_gaps)
+biggest_gaps = fun.find_and_print_biggest_gaps(minute_data)
+fun.visualize_gaps_with_candlestick(minute_data, biggest_gaps)
 
 # 01/05/2018,05:44,314.31,314.83,314.07,314.56,8704,10641
 # 01/05/2018,05:45,314.77,314.85,314.49,314.55,3625,6866
@@ -45,5 +45,5 @@ visualize_gaps_with_candlestick(minute_data, biggest_gaps)
 # 01/05/2018,06:16,314.61,314.61,313.73,313.76,7277,13399
 
 # Convert tick data into 1-hour bars
-hourly_bars = resample_data(tick_data, frequency='1h')
-plot_data(hourly_bars, plot_type='candle', title='TSLA 1-Hour Bars')
+hourly_bars = fun.resample_data(tick_data, frequency='1h')
+fun.plot_data(hourly_bars, plot_type='candle', title='TSLA 1-Hour Bars')
