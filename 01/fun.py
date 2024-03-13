@@ -17,7 +17,7 @@ def load_data(file_path, date_col=None, time_col=None, parse_dates=True, index_c
     return data
 
 
-def plot_data(data, plot_type='line', title='Stock Data', add_sessions=False):
+def plot_data(data, dformat, plot_type='line', title='Stock Data', add_sessions=False):
     """
     Plots the data as either a line chart or a candlestick chart, with an optional volume panel and session shading.
     """
@@ -45,12 +45,14 @@ def plot_data(data, plot_type='line', title='Stock Data', add_sessions=False):
                 ax.axvline(x=end_time, color='black', linestyle='--')
 
         # Formatting the plot
+        date_format = '%Y-%m-%d %H:%M:%S'
+        if dformat == 'minute' or dformat == 'tick':
+            date_format = '%H:%M:%S'
         ax.set_title(title)
         ax.set_xlabel('DateTime')
         ax.set_ylabel('Close Price')
         ax.legend()
-        ax.xaxis.set_major_locator(mdates.HourLocator(interval=1))
-        ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter(date_format))
         plt.xticks(rotation=45)
         plt.tight_layout()
         plt.show()
