@@ -8,13 +8,6 @@ import pandas as pd
 def load_data(file_path, date_col=None, time_col=None, parse_dates=True, index_col=None):
     """
     Loads data from a specified file path. Can handle combining date and time columns into a datetime index.
-
-    Parameters:
-    - file_path: Path to the CSV file.
-    - date_col: Column name for the date.
-    - time_col: Column name for the time.
-    - parse_dates: Whether to parse dates. Default is True.
-    - index_col: Column to set as index. Default is None.
     """
     data = pd.read_csv(file_path, parse_dates=parse_dates, index_col=index_col)
     if date_col and time_col:
@@ -27,12 +20,6 @@ def load_data(file_path, date_col=None, time_col=None, parse_dates=True, index_c
 def plot_data(data, plot_type='line', title='Stock Data', add_sessions=False):
     """
     Plots the data as either a line chart or a candlestick chart, with an optional volume panel and session shading.
-
-    Parameters:
-    - data: The pandas DataFrame with the stock data.
-    - plot_type: The type of plot ('line' or 'candle'). Default is 'line'.
-    - title: The title of the plot. Default is 'Stock Data'.
-    - add_sessions: Boolean flag to add session shading. Default is False.
     """
     # Plot a line chart using matplotlib for 'line' plot type
     if plot_type == 'line':
@@ -85,11 +72,6 @@ def plot_data(data, plot_type='line', title='Stock Data', add_sessions=False):
 def generate_market_data(initial_price=100, num_points=1000, volatility=0.1):
     """
     Generates random walk market data.
-
-    Parameters:
-    - initial_price: The starting price of the stock.
-    - num_points: The number of data points to generate.
-    - volatility: The volatility of the stock price, affecting the magnitude of price changes.
     """
     # Generate random price changes
     price_changes = np.random.randn(num_points) * volatility
@@ -106,10 +88,6 @@ def generate_market_data(initial_price=100, num_points=1000, volatility=0.1):
 def find_and_print_biggest_gaps(data, gap_number=10):
     """
     Finds and prints detailed information about the biggest gaps in time series data.
-
-    Parameters:
-    - data: A pandas DataFrame with a DateTime index.
-    - gap_number: Number of gaps to find.
     """
     # Ensure the data is sorted by the index to correctly calculate time differences
     data = data.sort_index()
@@ -147,10 +125,6 @@ def find_and_print_biggest_gaps(data, gap_number=10):
 def visualize_gaps_with_candlestick(data, gaps):
     """
     Visualizes gaps on a candlestick chart.
-
-    Parameters:
-    - data: The full pandas DataFrame with the stock data.
-    - gaps: A pandas DataFrame containing the gaps data, with 'Time_Diff' indicating the gap length.
     """
     mc = mpf.make_marketcolors(up='green', down='red', edge='inherit', wick='inherit')
     s = mpf.make_mpf_style(marketcolors=mc, gridstyle='--')
@@ -171,10 +145,6 @@ def visualize_gaps_with_candlestick(data, gaps):
 def resample_data(data, frequency='1min'):
     """
     Resamples the tick data into bars of a specified frequency.
-
-    Parameters:
-    - data: The pandas DataFrame with the tick data.
-    - frequency: The frequency for resampling ('1T' for 1-minute bars, '1H' for 1-hour bars, etc.).
     """
     data['Price'] = data['Up'].astype(float)
     data['Volume'] = data['Down'].astype(int)
