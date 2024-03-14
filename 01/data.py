@@ -28,6 +28,11 @@ fun.plot_data(market_data, dformat='daily', title='Random Walk Market Data: Clos
 biggest_gaps = fun.find_and_print_biggest_gaps(minute_data)
 fun.visualize_gaps_with_candlestick(minute_data, biggest_gaps)
 
+# Convert tick data into 1-hour bars
+hourly_bars = fun.resample_data(tick_data, frequency='1h')
+fun.plot_data(hourly_bars, dformat='minute', plot_type='candle', title='TSLA 1-Hour Bars')
+
+# Custom gapai
 # 01/05/2018,05:44,314.31,314.83,314.07,314.56,8704,10641
 # 01/05/2018,05:45,314.77,314.85,314.49,314.55,3625,6866
 
@@ -43,7 +48,3 @@ fun.visualize_gaps_with_candlestick(minute_data, biggest_gaps)
 # 01/05/2018,06:14,314.73,314.87,314.60,314.80,1420,3550
 # 01/05/2018,06:15,314.93,314.93,314.39,314.71,5883,9758
 # 01/05/2018,06:16,314.61,314.61,313.73,313.76,7277,13399
-
-# Convert tick data into 1-hour bars
-hourly_bars = fun.resample_data(tick_data, frequency='1h')
-fun.plot_data(hourly_bars, dformat='minute', plot_type='candle', title='TSLA 1-Hour Bars')
