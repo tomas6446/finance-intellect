@@ -1,8 +1,8 @@
 import datetime
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 
 dates = pd.date_range('20190214', periods=6)
 numbers = np.matrix([[101, 103], [105.5, 75], [102, 80.3], [100, 85], [110, 98], [109.6, 125.7]])
@@ -34,7 +34,7 @@ max_value_a = df['A'].max()
 print(max_value_a)
 
 print('\n7. Padvigubinti stulpelio A didžiausią reikšmę')
-df.loc[df['A'] == max_value_a, 'A'] = max_value_a * 2
+df.loc[df['A'] == max_value_a, 'A'] = max_value_a * 2  # selects the row where A is max and sets A to max * 2
 df_sorted_by_b = df.sort_values(by='B', ascending=False)
 print(df_sorted_by_b)
 
@@ -79,7 +79,7 @@ print("\n4. Dviejų vienodų šalia esančių radimas")
 a = np.random.randint(1, 6, size=10)
 print(f"a = {a}")
 for i in range(1, len(a)):
-    if a[i] == a[i-1]:
+    if a[i] == a[i - 1]:
         print(i)
 
 print("\n5. Elementų, kur a elementai didesni už b elementus, radimas")
@@ -93,7 +93,7 @@ print("\n6. Elementų perstūmimas vektoriuje, pakartojant paskutinį")
 a = np.random.randint(1, 11, size=10)
 print(a)
 for i in range(1, len(a)):
-    a[i-1] = a[i]
+    a[i - 1] = a[i]
 print(a)
 
 print("\n7. Sukeitimas elementų eilės tvarkos")
@@ -128,6 +128,3 @@ print("\n10. Gauti matricos diagonalinius elementus (be diag funkcijos)")
 a = np.random.randint(1, 11, size=(10, 10))
 for i in range(a.shape[0]):
     print(a[i, i])
-
-
-
