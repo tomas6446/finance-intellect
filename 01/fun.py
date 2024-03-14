@@ -80,6 +80,10 @@ def plot_data(data, dformat, plot_type='line', title='Stock Data', add_sessions=
 def generate_market_data(initial_price=100, num_points=1000, volatility=0.1):
     """
     Generates random walk market data.
+
+    initial_price: The starting price of the market data
+    num_points: The number of data points to generate
+    volatility: The standard deviation of the price changes
     """
     # Generate random price changes
     price_changes = np.random.randn(num_points) * volatility
