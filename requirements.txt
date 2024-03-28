@@ -2,3 +2,4 @@ numpy
 pyarrow
 pandas
 matplotlib
+yfinance
