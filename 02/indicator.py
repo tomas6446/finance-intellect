@@ -2,13 +2,15 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
+# Date,Time,Open,High,Low,Close,Volume
+
 def calculate_KVO(data, short_period=34, long_period=55):
     """
     Calculate Klinger Volume Oscillator (KVO)
     """
     dm = data['High'] - data['Low']
     cm = dm - dm.shift(1)
-    volume_force = cm * data['Vol']
+    volume_force = cm * data['Volume']
     kvo = volume_force.ewm(span=short_period, adjust=False).mean() - volume_force.ewm(span=long_period,
                                                                                       adjust=False).mean()
     data['KVO'] = kvo
@@ -76,7 +78,15 @@ def show_graph(data, plot_close=True, plot_ma=False, plot_kvo=False, plot_atr=Fa
     plt.show()
 
 
-data = pd.read_csv('../data/day_tsla.csv', parse_dates=True, index_col='Date')
+def read(file_path):
+    data = pd.read_csv(file_path)
+    data['DateTime'] = pd.to_datetime(data['Date'] + ' ' + data['Time'])
+    data.set_index('DateTime', inplace=True)
+    data.drop(columns=['Date', 'Time'], inplace=True)
+    return data
+
+
+data = read('../data/day_tsla.csv')
 
 data_ma = calculate_MA(data)
 show_graph(data_ma, plot_close=True, plot_ma=True)
