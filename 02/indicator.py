@@ -23,7 +23,7 @@ mpl.rcParams['axes.titlesize'] = 16  # For the title
 mpl.rcParams['xtick.labelsize'] = 12  # For x-axis tick labels
 mpl.rcParams['ytick.labelsize'] = 11  # For y-axis tick labels
 mpl.rcParams['legend.fontsize'] = 11  # For the legend
-mpl.rcParams['lines.linewidth'] = 1   # For the lines in the plot
+mpl.rcParams['lines.linewidth'] = 1  # For the lines in the plot
 mpl.rcParams['figure.figsize'] = [20, 12]
 
 
@@ -48,9 +48,10 @@ def calculate_HL(data):
 
 # Calculate Balance of Power (BOP)
 def calculate_BOP(data):
-    BOP = (data['Close'] - data['Open']) / (data['High'] - data['Low'])
-    data['BOP_raw'] = BOP.fillna(0)  # Fill any NaN results with 0
-    data['BOP'] = data['BOP_raw'].rolling(window=bop_period).mean().fillna(0)  # Smoothed BOP
+    data['BOP_raw'] = (data['Close'] - data['Open']) / (data['High'] - data['Low'])
+    data['BOP_raw'] = data['BOP_raw'].replace([np.inf, -np.inf], np.nan).fillna(0)
+    data['BOP'] = data['BOP_raw'].rolling(window=bop_period).mean().fillna(0)
+
     return data
 
 
@@ -62,7 +63,7 @@ def plot_stock_with_indicators(data, plot_LRS=False, plot_HL=False, plot_BOP=Fal
 
     ax_main = fig.add_subplot(gs[0])
     if main_plot_type == 'column':
-        ax_main.bar(data.index, data['Close'], label='Close Price', color='skyblue', width=0.5)
+        ax_main.bar(data.index, data['Close'], label='Close Price', color='blue', width=0.5)
     else:  # Default to 'line'
         ax_main.plot(data.index, data['Close'], label='Close Price', color='skyblue')
 
@@ -105,7 +106,6 @@ def plot_stock_with_indicators(data, plot_LRS=False, plot_HL=False, plot_BOP=Fal
     ax_main.xaxis.set_major_locator(mdates.AutoDateLocator())
     ax_main.xaxis.set_major_formatter(mdates.DateFormatter("%b %Y"))
     fig.autofmt_xdate()
-    plt.tight_layout()
     plt.show()
 
 
@@ -113,4 +113,4 @@ data = yf.download(ticker, start=from_date, end=to_date)
 data.to_csv(data_file_path)
 data = pd.read_csv(data_file_path, index_col='Date', parse_dates=True)
 
-plot_stock_with_indicators(data, plot_LRS=True, plot_BOP=True, plot_HL=True, main_plot_type='line')
+plot_stock_with_indicators(data, plot_LRS=True, main_plot_type='line')
