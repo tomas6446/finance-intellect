@@ -1,8 +1,10 @@
+import sys
+
 import matplotlib.pyplot as plt
 import pandas as pd
 
-
 # Date,Time,Open,High,Low,Close,Volume
+data_file_path = '../data/EURUSD_240.csv'
 
 def calculate_KVO(data, short_period=34, long_period=55):
     """
@@ -79,20 +81,31 @@ def show_graph(data, plot_close=True, plot_ma=False, plot_kvo=False, plot_atr=Fa
 
 
 def read(file_path, from_date=None, to_date=None):
-    data = pd.read_csv(file_path)
-    data['DateTime'] = pd.to_datetime(data['Date'] + ' ' + data['Time'])
-    data.set_index('DateTime', inplace=True)
-    data.drop(columns=['Date', 'Time'], inplace=True)
+    d = pd.read_csv(file_path)
+    d['DateTime'] = pd.to_datetime(d['Date'] + ' ' + d['Time'])
+    d.set_index('DateTime', inplace=True)
+    d.drop(columns=['Date', 'Time'], inplace=True)
 
+    # Convert from_date and to_date to datetime objects if they are not None
     if from_date:
-        data = data[data.index >= from_date]
+        from_datetime = pd.to_datetime(from_date)
+        d = d[d.index >= from_datetime]
     if to_date:
-        data = data[data.index <= to_date]
+        to_datetime = pd.to_datetime(to_date)
+        d = d[d.index <= to_datetime]
 
-    return data
+    # Correctly sort the DataFrame in ascending order
+    d = d.sort_index(ascending=True)
+
+    return d
 
 
-data = read('../data/EURUSD_H4.csv', from_date='2017-01-01', to_date='2018-01-01')
+
+
+if len(sys.argv) > 1:
+    data_file_path = sys.argv[1]
+
+data = read(data_file_path, '2009-01-01', '2010-01-01')
 
 data_ma = calculate_MA(data)
 show_graph(data_ma, plot_close=True, plot_ma=True)
