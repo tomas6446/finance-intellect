@@ -104,7 +104,7 @@ def read(file_path, from_date=None, to_date=None):
 if len(sys.argv) > 1:
     data_file_path = sys.argv[1]
 
-data = read(data_file_path, '2009-01-01', '2010-01-01')
+data = read(data_file_path, '2018-01-01', '2024-01-01')
 
 data_ma = calculate_MA(data)
 show_graph(data_ma, plot_close=True, plot_ma=True)
