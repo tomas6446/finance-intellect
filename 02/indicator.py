@@ -6,6 +6,7 @@ import pandas as pd
 # Date,Time,Open,High,Low,Close,Volume
 data_file_path = '../data/EURUSD_240.csv'
 
+
 def calculate_KVO(data, short_period=34, long_period=55):
     """
     Calculate Klinger Volume Oscillator (KVO)
@@ -98,8 +99,6 @@ def read(file_path, from_date=None, to_date=None):
     d = d.sort_index(ascending=True)
 
     return d
-
-
 
 
 if len(sys.argv) > 1:
