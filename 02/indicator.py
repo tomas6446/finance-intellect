@@ -78,15 +78,21 @@ def show_graph(data, plot_close=True, plot_ma=False, plot_kvo=False, plot_atr=Fa
     plt.show()
 
 
-def read(file_path):
+def read(file_path, from_date=None, to_date=None):
     data = pd.read_csv(file_path)
     data['DateTime'] = pd.to_datetime(data['Date'] + ' ' + data['Time'])
     data.set_index('DateTime', inplace=True)
     data.drop(columns=['Date', 'Time'], inplace=True)
+
+    if from_date:
+        data = data[data.index >= from_date]
+    if to_date:
+        data = data[data.index <= to_date]
+
     return data
 
 
-data = read('../data/day_tsla.csv')
+data = read('../data/EURUSD_H4.csv', from_date='2017-01-01', to_date='2018-01-01')
 
 data_ma = calculate_MA(data)
 show_graph(data_ma, plot_close=True, plot_ma=True)
