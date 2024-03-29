@@ -24,7 +24,7 @@ mpl.rcParams['xtick.labelsize'] = 12  # For x-axis tick labels
 mpl.rcParams['ytick.labelsize'] = 11  # For y-axis tick labels
 mpl.rcParams['legend.fontsize'] = 11  # For the legend
 mpl.rcParams['lines.linewidth'] = 1  # For the lines in the plot
-mpl.rcParams['figure.figsize'] = [20, 12]
+mpl.rcParams['figure.figsize'] = [21, 14]
 
 
 # Calculate Linear Regression Slope
@@ -58,7 +58,7 @@ def calculate_BOP(data):
 def plot_stock_with_indicators(data, plot_LRS=False, plot_HL=False, plot_BOP=False, main_plot_type='line'):
     subplots_count = 1 + sum([plot_LRS, plot_HL, plot_BOP])
     height_ratios = [2] + [1] * (subplots_count - 1)
-    fig = plt.figure(figsize=(16, 1 + 3 * subplots_count))
+    fig = plt.figure()
     gs = GridSpec(subplots_count, 1, height_ratios=height_ratios, hspace=0.05)
 
     ax_main = fig.add_subplot(gs[0])
@@ -113,4 +113,4 @@ data = yf.download(ticker, start=from_date, end=to_date)
 data.to_csv(data_file_path)
 data = pd.read_csv(data_file_path, index_col='Date', parse_dates=True)
 
-plot_stock_with_indicators(data, plot_LRS=True, main_plot_type='line')
+plot_stock_with_indicators(data, plot_LRS=True, plot_BOP=True, plot_HL=True, main_plot_type='line')
