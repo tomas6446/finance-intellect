@@ -15,8 +15,7 @@ from_date = '2004-01-01'
 to_date = '2024-01-01'
 
 lrs_window = 14
-stos_period = 50
-bop_period = 30
+bop_period = 14
 
 # Set global parameters to increase text and line sizes
 mpl.rcParams['axes.labelsize'] = 14  # For x and y labels
