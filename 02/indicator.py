@@ -5,8 +5,6 @@ import numpy as np
 import pandas as pd
 import yfinance as yf
 from sklearn.linear_model import LinearRegression
-from stock_indicators import indicators
-from stock_indicators import Quote
 
 # Date,Time,Open,High,Low,Close,Volume
 data_file_path = '../data/indicator_data.csv'
