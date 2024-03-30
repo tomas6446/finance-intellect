@@ -47,12 +47,14 @@ def plot_graph(dates, prices, slopes, title):
     axs[0].set_title('Close Prices')
     axs[0].set_ylabel('Price')
     axs[0].legend()
+    axs[0].grid()
 
     axs[1].plot(dates, slopes, label=title, color='orange')
     axs[1].set_title(title)
     axs[1].set_xlabel('Date')
     axs[1].set_ylabel('Slope')
     axs[1].legend()
+    axs[1].grid()
 
     fig.autofmt_xdate()
     plt.gca().xaxis.set_major_locator(plt.AutoLocator())
