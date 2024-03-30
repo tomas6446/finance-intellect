@@ -55,6 +55,7 @@ def plot_graph(dates, prices, slopes, title):
     axs[1].legend()
 
     fig.autofmt_xdate()
+    plt.gca().xaxis.set_major_locator(plt.AutoLocator())
     plt.tight_layout()
     plt.show()
 
