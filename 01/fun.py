@@ -36,13 +36,6 @@ def plot_data(data, dformat, plot_type='line', title='Stock Data', add_sessions=
         # Plot the Close price line chart
         ax.plot(data.index, data['Close'], label='Close Price', color='blue', linewidth=1)
 
-        # Add volume plot below if volume data is available
-        if 'Volume' in data.columns:
-            volume_ax = ax.twinx()
-            volume_ax.bar(data.index, data['Volume'], width=0.0005, alpha=0.3, color='orange')
-            volume_ax.set_ylabel('Volume', color='orange')
-            volume_ax.tick_params(axis='y', labelcolor='orange')
-
         # Add session shading
         if add_sessions:
             unique_dates = np.unique(data.index.date)
