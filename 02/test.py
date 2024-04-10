@@ -12,18 +12,22 @@ csv_data['Time'] = pd.to_datetime(csv_data['Time'], format=date_format)
 csv_data = csv_data.set_index('Time')
 csv_data = csv_data.iloc[::-1]
 
+# Trend confirmation: By identifying convergence and divergence,
+# the Chaikin Oscillator can help traders confirm the strength and direction of existing trends.
 cho.test_indicator(
     csv_data,
     '2019.3.25 09:31:00', '2019.3.25 10:59:00',
     'Chaikin oscillator Minute OHLC data'
 )
 
+# Trend strength: The Linear Regression Slope can help traders determine the strength of a trend.
 lrs.test_indicator_linear_slope(
     csv_data,
     '2019.3.25 9:31:00', '2019.3.25 10:59:00',
     'Linear regression slope Minute OHLC data'
 )
 
+# Volume confirmation: The On Balance Volume indicator can help traders confirm the strength of a trend based on volume.
 obv.test_indicator(
     csv_data,
     '2019.3.25 09:31:00', '2019.3.25 10:59:00',
