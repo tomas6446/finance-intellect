@@ -28,11 +28,8 @@ def chaikin_oscillator(data):
 
 def test_indicator(csv_data, start_date, end_date, figure_title):
     data_cho = chaikin_oscillator(csv_data)
-
-    # Selecting the data for plotting within the specified date range
     plot_data = data_cho.loc[start_date:end_date]
 
-    # Configuration for mplfinance plotting
     apds = [mpf.make_addplot(plot_data['ADL'], color='g', panel=1, ylabel='ADL'),
             mpf.make_addplot(plot_data['3 day EMA of ADL'], color='r', panel=1),
             mpf.make_addplot(plot_data['10 day EMA of ADL'], color='b', panel=1),

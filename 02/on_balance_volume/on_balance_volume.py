@@ -19,11 +19,8 @@ def on_balance_volume(data):
 
 def test_indicator(csv_data, start_date, end_date, figure_title):
     data_with_obv = on_balance_volume(csv_data)
-
-    # Selecting the data for plotting within the specified date range
     plot_data = data_with_obv.loc[start_date:end_date]
 
-    # Configuration for mplfinance plotting
     obv_plot = mpf.make_addplot(plot_data['OBV'], panel=2, color='fuchsia', ylabel='OBV')
 
     mpf.plot(plot_data,

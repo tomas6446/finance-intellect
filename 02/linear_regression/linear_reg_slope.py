@@ -17,13 +17,9 @@ def linear_regression_slope(data, window=14):
 
 
 def test_indicator_linear_slope(csv_data, start_date, end_date, figure_title):
-    # Calculate the Linear Regression Slope for the 'Close' prices
     csv_data['LRS'] = linear_regression_slope(csv_data['Close'], window=14)
-
-    # Selecting the data for plotting within the specified date range
     plot_data = csv_data.loc[start_date:end_date]
 
-    # Configuration for mplfinance plotting
     apds = [mpf.make_addplot(plot_data['LRS'], panel=2, color='purple', ylabel='LRS')]
 
     mpf.plot(plot_data,
