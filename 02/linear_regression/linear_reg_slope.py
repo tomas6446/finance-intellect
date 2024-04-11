@@ -1,9 +1,10 @@
-import numpy as np
 import mplfinance as mpf
+import numpy as np
 
 
 def linear_regression_slope(data, window=14):
     # Indices for each observation within the window
+    # 0, 1, 2, ..., window-1
     indices = np.arange(window)
 
     def slope(y_window):
