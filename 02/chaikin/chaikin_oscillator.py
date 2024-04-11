@@ -26,7 +26,7 @@ def chaikin_oscillator(data):
     return data
 
 
-def test_indicator(csv_data, start_date, end_date, figure_title):
+def plot_chaikin(csv_data, start_date, end_date, figure_title):
     data_cho = chaikin_oscillator(csv_data)
     plot_data = data_cho.loc[start_date:end_date]
 

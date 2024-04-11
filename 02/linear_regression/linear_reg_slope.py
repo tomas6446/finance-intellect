@@ -16,7 +16,7 @@ def linear_regression_slope(data, window=14):
     return data.rolling(window=window).apply(slope, raw=True)
 
 
-def test_indicator_linear_slope(csv_data, start_date, end_date, figure_title):
+def plot_linear_regression(csv_data, start_date, end_date, figure_title):
     csv_data['LRS'] = linear_regression_slope(csv_data['Close'], window=14)
     plot_data = csv_data.loc[start_date:end_date]
 

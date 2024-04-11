@@ -17,7 +17,7 @@ def on_balance_volume(data):
     return data
 
 
-def test_indicator(csv_data, start_date, end_date, figure_title):
+def plot_on_balance_vol(csv_data, start_date, end_date, figure_title):
     data_with_obv = on_balance_volume(csv_data)
     plot_data = data_with_obv.loc[start_date:end_date]
 
