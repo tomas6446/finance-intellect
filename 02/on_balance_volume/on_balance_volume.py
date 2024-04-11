@@ -6,6 +6,7 @@ def on_balance_volume(data):
     obv = [0]
     # Using vectorized approach to calculate OBV
     for i in range(1, len(data)):
+        # If the closing price is higher than the previous closing price
         if data['Close'].iloc[i] > data['Close'].iloc[i - 1]:
             obv.append(obv[-1] + data['Volume'].iloc[i])
         elif data['Close'].iloc[i] < data['Close'].iloc[i - 1]:
