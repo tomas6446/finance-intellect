@@ -5,12 +5,18 @@ import linear_regression.linear_reg_slope as lrs
 import on_balance_volume.on_balance_volume as obv
 
 data_file_name = '../data/eurusd_m1_data.csv'
-
 date_format = "%Y.%m.%d %H:%M:%S"
-csv_data = pd.read_csv(data_file_name)
-csv_data['Time'] = pd.to_datetime(csv_data['Time'], format=date_format)
-csv_data = csv_data.set_index('Time')
-csv_data = csv_data.iloc[::-1]
+
+
+def read_csv():
+    data = pd.read_csv(data_file_name)
+    data['Time'] = pd.to_datetime(data['Time'], format=date_format)
+    data = data.set_index('Time')
+    data = data.iloc[::-1]
+    return data
+
+
+csv_data = read_csv()
 
 # Trend confirmation: The Chaikin Oscillator can help traders confirm the strength and direction of existing trends.
 cho.plot_chaikin(
