@@ -2,7 +2,7 @@ import mplfinance as mpf
 import numpy as np
 
 
-def linear_regression_slope(data, window=14):
+def linear_regression_slope(data, window=20):
     indices = np.arange(window)
 
     def slope(y_window):
