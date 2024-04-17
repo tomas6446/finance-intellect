@@ -20,8 +20,8 @@ def accumulation_distribution_line(data):
 
 def chaikin_oscillator(data):
     data['ADL'] = accumulation_distribution_line(data)
-    data['3 day EMA of ADL'] = data['ADL'].ewm(span=3, adjust=False).mean()
-    data['10 day EMA of ADL'] = data['ADL'].ewm(span=10, adjust=False).mean()
+    data['3 day EMA of ADL'] = data['ADL'].ewm(span=3).mean()
+    data['10 day EMA of ADL'] = data['ADL'].ewm(span=10).mean()
     data['CHO'] = data['3 day EMA of ADL'] - data['10 day EMA of ADL']
     return data
 

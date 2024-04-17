@@ -11,7 +11,7 @@ def linear_regression_slope(data, window=20):
         m = ((np.mean(x) * np.mean(y)) - np.mean(x * y)) / ((np.mean(x) ** 2) - np.mean(x * x))
         return m
 
-    return data.rolling(window=window).apply(slope, raw=True)
+    return data.rolling(window=window).apply(slope)
 
 
 def plot_linear_regression(csv_data, start_date, end_date, figure_title):

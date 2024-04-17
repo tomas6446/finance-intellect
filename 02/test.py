@@ -12,7 +12,7 @@ def read_csv():
     data = pd.read_csv(data_file_name)
     data['Time'] = pd.to_datetime(data['Time'], format=date_format)
     data = data.set_index('Time')
-    data = data.iloc[::-1]
+    data = data.iloc[::-1]  # Reverse the data to have it in ascending order
     return data
 
 
