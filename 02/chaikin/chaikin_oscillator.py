@@ -1,6 +1,12 @@
 import mplfinance as mpf
 
 
+# How Do You Calculate the Accumulation Distribution Line?
+
+# 1. Money Flow Multiplier = [(Close  -  Low) - (High - Close)] /(High - Low)
+# 2. Money Flow Volume = Money Flow Multiplier x Volume for the Period
+# 3. ADL = Previous ADL + Current Period's Money Flow Volume
+
 def money_flow_multiplier(close, low, high):
     return ((close - low) - (high - close)) / (high - low)
 
