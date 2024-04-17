@@ -10,12 +10,12 @@ def money_flow_volume(mfm, volume):
 
 
 def accumulation_distribution_line(data):
-    mfm = money_flow_multiplier(data['Close'],
-                                data['Low'],
-                                data['High'])
+    money_flow_mult = money_flow_multiplier(data['Close'],
+                                            data['Low'],
+                                            data['High'])
 
-    mfv = money_flow_volume(mfm, data['Volume'])
-    return mfv.cumsum()
+    money_flow_vol = money_flow_volume(money_flow_mult, data['Volume'])
+    return money_flow_vol.cumsum()
 
 
 def chaikin_oscillator(data):
