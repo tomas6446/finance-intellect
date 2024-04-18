@@ -32,6 +32,4 @@ def plot_on_balance_vol(csv_data, start_date, end_date, figure_title):
              volume=True,
              figratio=(14, 9),
              datetime_format='%Y-%m-%d %H:%M',
-             tight_layout=False,
-             show_nontrading=False,
              figsize=(12, 9))
