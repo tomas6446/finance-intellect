@@ -8,9 +8,9 @@ def on_balance_volume(data):
     for i in range(1, len(data)):
         # If the closing price is higher than the previous closing price
         if data['Close'].iloc[i] > data['Close'].iloc[i - 1]:
-            obv.append(obv[-1] + data['Volume'].iloc[i])
+            obv.append(obv[-1] + data['Volume'].iloc[i])  # Add the current volume to the previous OBV value
         elif data['Close'].iloc[i] < data['Close'].iloc[i - 1]:
-            obv.append(obv[-1] - data['Volume'].iloc[i])
+            obv.append(obv[-1] - data['Volume'].iloc[i])  # Subtract the current volume from the previous OBV value
         else:
             obv.append(obv[-1])
 
