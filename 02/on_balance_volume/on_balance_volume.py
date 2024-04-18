@@ -1,5 +1,12 @@
 import mplfinance as mpf
 
+# Formula for On Balance Volume (OBV)
+# 1. If the closing price is higher than the previous closing price, then:
+#    OBV = Previous OBV + Current Volume
+# 2. If the closing price is lower than the previous closing price, then:
+#    OBV = Previous OBV - Current Volume
+# 3. If the closing price is equal to the previous closing price, then:
+#    OBV = Previous OBV
 
 def on_balance_volume(data):
     # Initialize OBV value
