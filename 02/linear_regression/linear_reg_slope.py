@@ -20,8 +20,6 @@ def plot_linear_regression(csv_data, start_date, end_date, figure_title):
 
     # Create a color list based on the sign of the LRS values
     colors = ['green' if val > 0 else 'red' for val in plot_data['LRS']]
-
-    # Create an additional plot descriptor for the LRS bars
     lrs_bars = mpf.make_addplot(plot_data['LRS'], panel=2, type='bar', color=colors, ylabel='LRS')
 
     mpf.plot(plot_data,
