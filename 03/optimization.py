@@ -5,8 +5,7 @@ from strategy import strategy_returns
 
 def optimize_strategy(data):
     best_return = -np.inf
-    best_short_window = None
-    best_long_window = None
+    best_short_window, best_long_window = None, None
 
     for short_window in range(5, 50, 5):
         for long_window in range(50, 200, 5):

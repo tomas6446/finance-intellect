@@ -1,38 +1,39 @@
 import yfinance as yf
 
-import strategy as st
 from optimization import optimize_strategy
+from strategy import calculate_strategy_returns_with_costs
 from visualization import plot_signals, plot_cumulative_returns, plot_comparison
 
+ticker = "AAPL"
+start_date = "2020-01-01"
+end_date = "2021-01-01"
+data = yf.download(ticker, start=start_date, end=end_date)
 
-def main():
-    ticker = "AAPL"
-    data = yf.download(ticker, start="2020-01-01", end="2021-01-01")
-
-    # Original Parameters for comparison
-    original_params = (20, 50)  # Example original short and long windows
-
-    # Calculate returns with original parameters as a baseline
-    print(f"Using original parameters: Short window = {original_params[0]}, "
-          f"Long window = {original_params[1]}")
-    original_data, original_return_with_costs = st.calculate_strategy_returns_with_costs(
-        data.copy(), *original_params, 0.05, 0.02, 0.001)
-    print(f"Baseline Return with Costs using Original Parameters: {original_return_with_costs}")
-
-    # Optimize Strategy Parameters
-    optimized_short_window, optimized_long_window, _ = optimize_strategy(data)
-    optimized_params = (optimized_short_window, optimized_long_window)
-    print(f"Optimized parameters: Short window = {optimized_short_window}, "
-          f"Long window = {optimized_long_window}")
-
-    # Visualization: Compare Original vs. Optimized Parameters
-    plot_comparison(data, original_params, optimized_params, 0.05, 0.02, 0.001)
-
-    data = original_data  # or optimized_data if you want to visualize the optimized strategy
-    plot_signals(data, *optimized_params, 0.05, 0.02, 0.001)
-
-    plot_cumulative_returns(data)
+window = (10, 50)
+take_profit = 0.05
+stop_loss = 0.02
+commission = 0.001
 
 
-if __name__ == "__main__":
-    main()
+def run_strategy_with_parameters(data, window, take_profit, stop_loss, commission):
+    """Calculates and prints the return of the trading strategy for given parameters."""
+    print(f"Using parameters: Short window = {window[0]}, Long window = {window[1]}")
+
+    strategy_data, return_with_costs = calculate_strategy_returns_with_costs(
+        data.copy(),
+        window,
+        take_profit,
+        stop_loss,
+        commission
+    )
+    print(f"Return with Costs: {return_with_costs}")
+    return strategy_data, return_with_costs
+
+
+original_data, original_return = run_strategy_with_parameters(data, window, take_profit, stop_loss, commission)
+optimized_params = optimize_strategy(data)
+optimized_window = optimized_params[:2]
+print(f"Optimized parameters: Short window = {optimized_window[0]}, Long window = {optimized_window[1]}")
+plot_comparison(data, window, optimized_window, take_profit, stop_loss, commission)
+plot_signals(original_data, window, take_profit, stop_loss, commission)
+plot_cumulative_returns(original_data)

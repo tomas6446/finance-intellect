@@ -4,11 +4,12 @@ import numpy as np
 import strategy as st
 
 
-def plot_signals(data, short_window, long_window, take_profit=None, stop_loss=None, commission=None):
+def plot_signals(data, window, take_profit=None, stop_loss=None, commission=None):
     """
     Plots the closing price, moving averages, buy/sell signals, and optionally points where Take Profit or Stop Loss was triggered.
     """
     # Calculate short and long moving averages
+    short_window, long_window = window
     data['SMA_short'] = data['Close'].rolling(window=short_window).mean()
     data['SMA_long'] = data['Close'].rolling(window=long_window).mean()
 
@@ -48,10 +49,8 @@ def plot_signals(data, short_window, long_window, take_profit=None, stop_loss=No
     plt.scatter(data.index, data['Sell'], label='Sell Signal', marker='v', color='red', s=100, alpha=1)
 
     if take_profit is not None and stop_loss is not None:
-        plt.scatter(data.index, data['TP_triggered'], label='Take Profit Triggered', marker='*', color='blue', s=100,
-                    alpha=1)
-        plt.scatter(data.index, data['SL_triggered'], label='Stop Loss Triggered', marker='*', color='orange', s=100,
-                    alpha=1)
+        plt.scatter(data.index, data['TP_triggered'], label='Take Profit Triggered', marker='*', color='blue', s=100, alpha=1)
+        plt.scatter(data.index, data['SL_triggered'], label='Stop Loss Triggered', marker='*', color='orange', s=100, alpha=1)
 
     plt.title('Trading Signals')
     plt.xlabel('Date')
@@ -79,18 +78,16 @@ def plot_cumulative_returns(data):
     plt.show()
 
 
-def plot_comparison(data, original_params, optimized_params, take_profit, stop_loss, commission):
+def plot_comparison(data, window, optimized_window, take_profit, stop_loss, commission):
     # Calculate returns for original parameters
-    original_data, _ = st.calculate_strategy_returns_with_costs(
-        data.copy(), *original_params, take_profit, stop_loss, commission)
+    original_data, _ = st.calculate_strategy_returns_with_costs(data.copy(), window, take_profit, stop_loss, commission)
 
     # Calculate returns for optimized parameters
-    optimized_data, _ = st.calculate_strategy_returns_with_costs(
-        data.copy(), *optimized_params, take_profit, stop_loss, commission)
+    optimized_data, _ = st.calculate_strategy_returns_with_costs(data.copy(), optimized_window, take_profit, stop_loss, commission)
 
     plt.figure(figsize=(14, 7))
-    plt.plot(original_data['Cumulative_Strategy_Return'], label=f'Original Params: {original_params}', color='blue')
-    plt.plot(optimized_data['Cumulative_Strategy_Return'], label=f'Optimized Params: {optimized_params}', color='green')
+    plt.plot(original_data['Cumulative_Strategy_Return'], label=f'Original Params: {window}', color='blue')
+    plt.plot(optimized_data['Cumulative_Strategy_Return'], label=f'Optimized Params: {optimized_window}', color='green')
 
     plt.title('Cumulative Returns: Original vs. Optimized Parameters')
     plt.xlabel('Date')
