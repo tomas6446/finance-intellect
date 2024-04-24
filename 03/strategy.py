@@ -1,6 +1,13 @@
 import numpy as np
 
 
+# Buy Signal: Typically generated when the short SMA crosses above the long SMA.
+# This indicates that recent prices are rising above the average of the longer period, suggesting an upward trend.
+
+# Sell Signal: Generated when the short SMA crosses below the long SMA,
+# indicating that recent prices are falling below the average of the longer period, suggesting a downward trend.
+
+
 def calculate_strategy_returns(data, window):
     """
     Calculates strategy returns based on short and long moving averages.

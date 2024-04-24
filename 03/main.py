@@ -27,7 +27,6 @@ def run_strategy_with_parameters(data, window, take_profit, stop_loss, commissio
         commission
     )
     return_with_costs = strategy_data.iloc[-1]
-    print(f"Return with Costs: {return_with_costs}")
     return strategy_data, return_with_costs
 
 
