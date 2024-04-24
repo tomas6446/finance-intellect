@@ -11,7 +11,8 @@ def optimize_strategy(data):
         for long_window in range(50, 200, 5):
             if short_window >= long_window:
                 continue
-            current_return = strategy_returns(data.copy(), short_window, long_window)
+            current_return = strategy_returns(data.copy(), window=(short_window, long_window))
+            current_return = current_return.iloc[-1]
             if current_return > best_return:
                 best_return = current_return
                 best_short_window = short_window

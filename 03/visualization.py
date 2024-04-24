@@ -1,56 +1,57 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+import optimization as opt
 import strategy as st
 
 
-def plot_signals(data, window, take_profit=None, stop_loss=None, commission=None):
+def plot_signals(data, window, take_profit=None, stop_loss=None):
     """
-    Plots the closing price, moving averages, buy/sell signals, and optionally points where Take Profit or Stop Loss was triggered.
+    Plots the closing price, buy/sell signals, and points where Take Profit or Stop Loss was triggered.
     """
-    # Calculate short and long moving averages
-    short_window, long_window = window
-    data['SMA_short'] = data['Close'].rolling(window=short_window).mean()
-    data['SMA_long'] = data['Close'].rolling(window=long_window).mean()
+    # Calculate Bollinger Bands
+    short_window, _ = window
+    std_dev = data['Close'].rolling(window=short_window).std()
 
-    # Identify buy and sell signals
+    data['Upper_Band'] = data['SMA_short'] + (std_dev * 2)
+    data['Lower_Band'] = data['SMA_short'] - (std_dev * 2)
+    data['Average'] = data['Close'].rolling(window=short_window).mean()
     data['Buy'] = np.where((data['Signal'] == 1) & (data['Signal'].shift(1) == -1), data['Close'], np.nan)
     data['Sell'] = np.where((data['Signal'] == -1) & (data['Signal'].shift(1) == 1), data['Close'], np.nan)
+    data['TP_triggered'] = np.nan
+    data['SL_triggered'] = np.nan
 
-    if take_profit is not None and stop_loss is not None and commission is not None:
-        position_open_price = None
-        data['TP_triggered'] = np.nan
-        data['SL_triggered'] = np.nan
+    # Get indices where trades are opened or closed
+    open_positions = data[data['Buy'].notna()].index
 
-        for i in range(1, len(data)):
-            if data['Signal'].iloc[i] == 1 and not np.isnan(data['Buy'].iloc[i]):
-                position_open_price = data['Close'].iloc[i]
-            elif data['Signal'].iloc[i] == -1 and not np.isnan(
-                    data['Sell'].iloc[i]) and position_open_price is not None:
-                position_open_price = None  # Reset for the next trade
-            elif position_open_price is not None:
-                current_price = data['Close'].iloc[i]
-                trade_return = (current_price / position_open_price) - 1
+    # Track open position price
+    for idx in open_positions:
+        position_index = data.index.get_loc(idx)  # Get the integer location for the label
+        position_open_price = data.loc[idx, 'Close']
 
-                if trade_return >= take_profit:
-                    data.at[data.index[i], 'TP_triggered'] = data['Close'].iloc[i]
-                    position_open_price = None  # Assume position is closed
-                elif trade_return <= -stop_loss:
-                    data.at[data.index[i], 'SL_triggered'] = data['Close'].iloc[i]
-                    position_open_price = None  # Assume position is closed
+        for offset in range(1, len(data) - position_index):
+            sub_idx = data.index[position_index + offset]
+            current_price = data.loc[sub_idx, 'Close']
+            trade_return = (current_price / position_open_price) - 1
+
+            if trade_return >= take_profit:
+                data.loc[sub_idx, 'TP_triggered'] = current_price
+                break
+            elif trade_return <= -stop_loss:
+                data.loc[sub_idx, 'SL_triggered'] = current_price
+                break
 
     # Plotting
     plt.figure(figsize=(14, 7))
     plt.plot(data['Close'], label='Close Price', alpha=0.5)
-    plt.plot(data['SMA_short'], label=f'{short_window}day SMA', alpha=0.75)
-    plt.plot(data['SMA_long'], label=f'{long_window}day SMA', alpha=0.75)
+    plt.plot(data['Average'], label='Average', color='green', alpha=0.3)
+
+    plt.fill_between(data.index, data['Lower_Band'], data['Upper_Band'], color='grey', alpha=0.3, label='Bollinger Bands')
 
     plt.scatter(data.index, data['Buy'], label='Buy Signal', marker='^', color='green', s=100, alpha=1)
     plt.scatter(data.index, data['Sell'], label='Sell Signal', marker='v', color='red', s=100, alpha=1)
-
-    if take_profit is not None and stop_loss is not None:
-        plt.scatter(data.index, data['TP_triggered'], label='Take Profit Triggered', marker='*', color='blue', s=100, alpha=1)
-        plt.scatter(data.index, data['SL_triggered'], label='Stop Loss Triggered', marker='*', color='orange', s=100, alpha=1)
+    plt.scatter(data.index, data['TP_triggered'], label='Take Profit Triggered', marker='*', color='blue', s=100, alpha=1)
+    plt.scatter(data.index, data['SL_triggered'], label='Stop Loss Triggered', marker='*', color='orange', s=100, alpha=1)
 
     plt.title('Trading Signals')
     plt.xlabel('Date')
@@ -64,32 +65,50 @@ def plot_cumulative_returns(data):
     Plots the cumulative returns of the strategy over time.
     """
     plt.figure(figsize=(14, 7))
+    plt.plot(data.index, data['Cumulative_Strategy_Return'], label='Cumulative Strategy Return', color='blue')
 
-    # Ensure 'Cumulative_Strategy_Return' is calculated and exists
-    if 'Cumulative_Strategy_Return' in data.columns:
-        plt.plot(data.index, data['Cumulative_Strategy_Return'], label='Cumulative Strategy Return', color='blue')
-        plt.title('Cumulative Returns Over Time')
-        plt.xlabel('Date')
-        plt.ylabel('Cumulative Returns')
-        plt.legend()
-    else:
-        print("Cumulative_Strategy_Return column not found. Ensure it's calculated before plotting.")
-
+    plt.title('Cumulative Returns Over Time')
+    plt.xlabel('Date')
+    plt.ylabel('Cumulative Returns')
+    plt.legend()
     plt.show()
 
 
 def plot_comparison(data, window, optimized_window, take_profit, stop_loss, commission):
     # Calculate returns for original parameters
-    original_data, _ = st.calculate_strategy_returns_with_costs(data.copy(), window, take_profit, stop_loss, commission)
+    _, original_data = st.calculate_strategy_returns_with_costs(data.copy(), window, take_profit, stop_loss, commission)
 
     # Calculate returns for optimized parameters
-    optimized_data, _ = st.calculate_strategy_returns_with_costs(data.copy(), optimized_window, take_profit, stop_loss, commission)
+    _, optimized_data = st.calculate_strategy_returns_with_costs(data.copy(), optimized_window, take_profit, stop_loss, commission)
 
     plt.figure(figsize=(14, 7))
-    plt.plot(original_data['Cumulative_Strategy_Return'], label=f'Original Params: {window}', color='blue')
-    plt.plot(optimized_data['Cumulative_Strategy_Return'], label=f'Optimized Params: {optimized_window}', color='green')
+    plt.plot(original_data, label=f'Original Params: {window}', color='blue')
+    plt.plot(optimized_data, label=f'Optimized Params: {optimized_window}', color='green')
 
     plt.title('Cumulative Returns: Original vs. Optimized Parameters')
+    plt.xlabel('Date')
+    plt.ylabel('Cumulative Returns')
+    plt.legend()
+    plt.show()
+
+
+def plot_sharpe_comparison(data, window):
+    # Calculate returns for original parameters
+    original_returns = st.strategy_returns(data.copy(), window)
+    original_sharpe = st.sharpe_ratio(original_returns)
+
+    # Optimize the strategy
+    optimized_params = opt.optimize_strategy(data)
+    optimized_window = optimized_params[:2]
+    optimized_returns = st.strategy_returns(data.copy(), optimized_window)
+    optimized_sharpe = st.sharpe_ratio(optimized_returns)
+
+    plt.figure(figsize=(14, 7))
+    # Convert to cumulative returns if they aren't already
+    plt.plot(original_returns, label=f'Original: Sharpe Ratio = {original_sharpe:.2f}', color='blue')
+    plt.plot(optimized_returns, label=f'Optimized: Sharpe Ratio = {optimized_sharpe:.2f}', color='green')
+
+    plt.title('Sharpe Ratio Comparison: Original vs. Optimized Strategies')
     plt.xlabel('Date')
     plt.ylabel('Cumulative Returns')
     plt.legend()

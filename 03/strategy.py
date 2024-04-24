@@ -1,10 +1,11 @@
 import numpy as np
 
 
-def strategy_returns(data, short_window, long_window):
+def strategy_returns(data, window):
     """
     Calculates strategy returns based on short and long moving averages.
     """
+    short_window, long_window = window
     data['SMA_short'] = data['Close'].rolling(window=short_window).mean()
     data['SMA_long'] = data['Close'].rolling(window=long_window).mean()
 
@@ -17,9 +18,9 @@ def strategy_returns(data, short_window, long_window):
     data['Strategy_Return'] = data['Signal'].shift(1) * data['Return']
 
     # Cumulative strategy returns
-    total_return = data['Strategy_Return'].cumsum().iloc[-1]
+    data['Cumulative_Strategy_Return'] = data['Strategy_Return'].cumsum()
 
-    return total_return
+    return data['Cumulative_Strategy_Return']
 
 
 def calculate_strategy_returns_with_costs(data, window, take_profit, stop_loss, commission):
@@ -58,4 +59,11 @@ def calculate_strategy_returns_with_costs(data, window, take_profit, stop_loss, 
     # Calculate cumulative strategy return
     data['Cumulative_Strategy_Return'] = data['Strategy_Return'].cumsum()
 
-    return data, data['Cumulative_Strategy_Return'].iloc[-1]
+    return data, data['Cumulative_Strategy_Return']
+
+
+def sharpe_ratio(original_returns):
+    """
+    Calculates the Sharpe ratio of the strategy.
+    """
+    return original_returns.mean() / original_returns.std()
