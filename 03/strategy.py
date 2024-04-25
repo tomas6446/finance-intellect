@@ -47,17 +47,34 @@ def calculate_strategy_returns_with_costs(data, window, take_profit, stop_loss, 
     position_open_price = None
 
     for i in range(1, len(data)):
-        if data['Signal'].iloc[i] == 1 and data['Signal'].iloc[i - 1] == -1:
-            # Open position
-            position_open_price = data['Close'].iloc[i]
-            data.at[data.index[i], 'Strategy_Return'] -= commission  # Deduct commission from the return
+        current_signal = data['Signal'].iloc[i]  # Current trading signal
+        previous_signal = data['Signal'].iloc[i - 1]  # Previous trading signal
+        current_price = data['Close'].iloc[i]  # Current closing price of the asset
+
+        # Check for a new buy signal
+        if current_signal == 1 and previous_signal == -1:
+            # A new buy signal is confirmed, so we open a position.
+            position_open_price = current_price
+            # Deduct the commission for opening the position from the strategy return.
+            data.at[data.index[i], 'Strategy_Return'] -= commission
+
+        # If there's an open position, check if we need to close it.
         elif position_open_price is not None:
-            # Check take profit and stop loss
-            change = (data['Close'].iloc[i] / position_open_price) - 1
-            if change >= take_profit or change <= -stop_loss or data['Signal'].iloc[i] == -1:
-                # Close position
+            # Calculate the return since the position was opened.
+            change = (current_price / position_open_price) - 1
+
+            # Check if the change meets the criteria for closing the position.
+            should_take_profit = change >= take_profit  # Check if profit target has been reached.
+            should_stop_loss = change <= -stop_loss  # Check if stop loss limit has been hit.
+            should_sell_signal = current_signal == -1  # Check if there's a sell signal.
+
+            # If any condition to close the position is met, proceed to close.
+            if should_take_profit or should_stop_loss or should_sell_signal:
+                # Calculate the adjusted return, ensuring it doesn't exceed take profit or fall below stop loss.
                 adjusted_return = max(min(change, take_profit), -stop_loss)
+                # Record the adjusted return, net of commission, for the strategy.
                 data.at[data.index[i], 'Strategy_Return'] = adjusted_return - commission
+                # Reset the open position price to None, as the position is now closed.
                 position_open_price = None
 
     # Calculate cumulative returns

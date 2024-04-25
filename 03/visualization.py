@@ -43,7 +43,7 @@ def plot_signals(data, window, take_profit=None, stop_loss=None):
 
     # Plotting
     plt.figure(figsize=(14, 7))
-    plt.plot(data['Close'], label='Close Price', alpha=0.5)
+    plt.plot(data['Close'], label='Close Price', alpha=1)
     plt.plot(data['Average'], label='Average', color='green', alpha=0.3)
 
     plt.fill_between(data.index, data['Lower_Band'], data['Upper_Band'], color='grey', alpha=0.3, label='Bollinger Bands')
