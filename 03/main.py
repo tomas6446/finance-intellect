@@ -16,17 +16,18 @@ commission = 0.001
 
 
 print(f"Using parameters: Short window = {window[0]}, Long window = {window[1]}")
-strategy_data, _ = calculate_strategy_returns_with_costs(
+strategy_data, strategy_return = calculate_strategy_returns_with_costs(
     data.copy(),
     window,
     take_profit,
     stop_loss,
     commission
 )
-return_with_costs = strategy_data.iloc[-1]
+
 optimized_params = optimize_strategy(data)
 optimized_window = optimized_params[:2]
 print(f"Optimized parameters: Short window = {optimized_window[0]}, Long window = {optimized_window[1]}")
+
 plot_comparison(data, window, optimized_window, take_profit, stop_loss, commission)
 plot_signals(strategy_data, window, take_profit, stop_loss)
 plot_cumulative_returns(strategy_data)
