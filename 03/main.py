@@ -37,4 +37,4 @@ print(f"Optimized parameters: Short window = {optimized_window[0]}, Long window 
 plot_comparison(data, window, optimized_window, take_profit, stop_loss, commission)
 plot_signals(strategy_data, window, take_profit, stop_loss)
 plot_cumulative_returns(strategy_data)
-plot_sharpe_comparison(data, window)
+plot_sharpe_comparison(data, window, optimized_window)

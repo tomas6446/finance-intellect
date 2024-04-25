@@ -92,14 +92,12 @@ def plot_comparison(data, window, optimized_window, take_profit, stop_loss, comm
     plt.show()
 
 
-def plot_sharpe_comparison(data, window):
+def plot_sharpe_comparison(data, window, optimized_window):
     # Calculate returns for original parameters
     original_returns = st.calculate_strategy_returns(data.copy(), window)
     original_sharpe = st.sharpe_ratio(original_returns)
 
     # Optimize the strategy
-    optimized_params = opt.optimize_strategy(data)
-    optimized_window = optimized_params[:2]
     optimized_returns = st.calculate_strategy_returns(data.copy(), optimized_window)
     optimized_sharpe = st.sharpe_ratio(optimized_returns)
 
