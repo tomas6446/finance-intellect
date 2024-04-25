@@ -15,22 +15,15 @@ stop_loss = 0.01
 commission = 0.001
 
 
-def run_strategy_with_parameters(data, window, take_profit, stop_loss, commission):
-    """Calculates and prints the return of the trading strategy for given parameters."""
-    print(f"Using parameters: Short window = {window[0]}, Long window = {window[1]}")
-
-    strategy_data, _ = calculate_strategy_returns_with_costs(
-        data.copy(),
-        window,
-        take_profit,
-        stop_loss,
-        commission
-    )
-    return_with_costs = strategy_data.iloc[-1]
-    return strategy_data, return_with_costs
-
-
-strategy_data, strategy_return = run_strategy_with_parameters(data, window, take_profit, stop_loss, commission)
+print(f"Using parameters: Short window = {window[0]}, Long window = {window[1]}")
+strategy_data, _ = calculate_strategy_returns_with_costs(
+    data.copy(),
+    window,
+    take_profit,
+    stop_loss,
+    commission
+)
+return_with_costs = strategy_data.iloc[-1]
 optimized_params = optimize_strategy(data)
 optimized_window = optimized_params[:2]
 print(f"Optimized parameters: Short window = {optimized_window[0]}, Long window = {optimized_window[1]}")
