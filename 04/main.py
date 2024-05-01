@@ -110,7 +110,17 @@ def print_orders():
 def cancel_order():
     order_id = int(input("Enter the order ID to cancel: "))
     print("Cancelling order...")
-    print(f"Order {order_id} cancelled")
+    orders = ib.openOrders()
+    if not orders:
+        print("No open orders.")
+        return
+
+    for order in orders:
+        if order.orderId == order_id:
+            ib.cancelOrder(order)
+            print(f"Order {order_id} cancelled")
+            return
+    print(f"Order {order_id} not found")
 
 
 def main_menu():
