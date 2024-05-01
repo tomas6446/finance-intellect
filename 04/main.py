@@ -44,7 +44,7 @@ def plot_data(df, symbol):
 def make_contract():
     symbol = input("Enter the symbol: ")
     contract = create_contract(symbol)
-    print(f"\nContract created for Symbol {contract.symbol}, "
+    print(f"\nContract created for: Symbol: {contract.symbol}, "
           f"Type: {contract.secType}, "
           f"Exchange: {contract.exchange}, "
           f"Currency: {contract.currency}")
@@ -100,7 +100,7 @@ def print_orders():
         for order_obj in open_orders:
             order = order_obj.order
             contract = order_obj.contract
-            print(f"\nOrderId: {order.orderId}, "
+            print(f"OrderId: {order.orderId}, "
                   f"PermId: {order.permId}, "
                   f"ClientId: {order.clientId}, "
                   f"Account: {order.account}, "
