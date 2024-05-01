@@ -43,7 +43,7 @@ def plot_signals(data, window, take_profit=None, stop_loss=None):
 
     # Plotting
     plt.figure(figsize=(14, 7))
-    plt.plot(data['Close'], label='Close Price', alpha=0.5)
+    plt.plot(data['Close'], label='Close Price', alpha=1)
     plt.plot(data['Average'], label='Average', color='green', alpha=0.3)
 
     plt.fill_between(data.index, data['Lower_Band'], data['Upper_Band'], color='grey', alpha=0.3, label='Bollinger Bands')
@@ -92,14 +92,12 @@ def plot_comparison(data, window, optimized_window, take_profit, stop_loss, comm
     plt.show()
 
 
-def plot_sharpe_comparison(data, window):
+def plot_sharpe_comparison(data, window, optimized_window):
     # Calculate returns for original parameters
     original_returns = st.calculate_strategy_returns(data.copy(), window)
     original_sharpe = st.sharpe_ratio(original_returns)
 
     # Optimize the strategy
-    optimized_params = opt.optimize_strategy(data)
-    optimized_window = optimized_params[:2]
     optimized_returns = st.calculate_strategy_returns(data.copy(), optimized_window)
     optimized_sharpe = st.sharpe_ratio(optimized_returns)
 

@@ -11,30 +11,24 @@ data = yf.download(ticker, start=start_date, end=end_date)
 
 window = (10, 50)
 take_profit = 0.05
-stop_loss = 0.02
+stop_loss = 0.01
 commission = 0.001
 
 
-def run_strategy_with_parameters(data, window, take_profit, stop_loss, commission):
-    """Calculates and prints the return of the trading strategy for given parameters."""
-    print(f"Using parameters: Short window = {window[0]}, Long window = {window[1]}")
+print(f"Using parameters: Short window = {window[0]}, Long window = {window[1]}")
+strategy_data, strategy_return = calculate_strategy_returns_with_costs(
+    data.copy(),
+    window,
+    take_profit,
+    stop_loss,
+    commission
+)
 
-    strategy_data, _ = calculate_strategy_returns_with_costs(
-        data.copy(),
-        window,
-        take_profit,
-        stop_loss,
-        commission
-    )
-    return_with_costs = strategy_data.iloc[-1]
-    return strategy_data, return_with_costs
-
-
-original_data, original_return = run_strategy_with_parameters(data, window, take_profit, stop_loss, commission)
 optimized_params = optimize_strategy(data)
 optimized_window = optimized_params[:2]
 print(f"Optimized parameters: Short window = {optimized_window[0]}, Long window = {optimized_window[1]}")
+
 plot_comparison(data, window, optimized_window, take_profit, stop_loss, commission)
-plot_signals(original_data, window, take_profit, stop_loss)
-plot_cumulative_returns(original_data)
-plot_sharpe_comparison(data, window)
+plot_signals(strategy_data, window, take_profit, stop_loss)
+plot_cumulative_returns(strategy_data)
+plot_sharpe_comparison(data, window, optimized_window)
