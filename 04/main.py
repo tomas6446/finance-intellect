@@ -87,7 +87,7 @@ def place_order():
           f"Status: {trade.orderStatus.status}")
 
     def fill_event(trade, fill):
-        print(f"  Trade status {trade.orderStatus} filled for {fill.execution.shares} shares at {fill.execution.price}")
+        print(f"Trade status {trade.orderStatus} filled for {fill.execution.shares} shares at {fill.execution.price}")
 
     trade.fillEvent += fill_event
 
