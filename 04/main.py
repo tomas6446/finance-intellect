@@ -1,22 +1,19 @@
 import matplotlib.pyplot as plt
 from ib_insync import IB, util, Forex, Order
 
-ib = IB()
-ib.connect('127.0.0.1', 7497, clientId=1)
-
 
 def create_contract(symbol):
     return Forex(symbol)
 
 
-def fetch_and_visualize(symbol, duration, barSize):
+def fetch_and_visualize(symbol, duration, bar_size):
     contract = create_contract(symbol)
 
     bars = ib.reqHistoricalData(
         contract,
         endDateTime='',
         durationStr=duration,
-        barSizeSetting=barSize,
+        barSizeSetting=bar_size,
         whatToShow='MIDPOINT',
         useRTH=True,
         formatDate=1
@@ -86,11 +83,6 @@ def place_order():
           f"Price: {'Market' if price == 0 else price}, "
           f"Status: {trade.orderStatus.status}")
 
-    def fill_event(trade, fill):
-        print(f"Trade status {trade.orderStatus} filled for {fill.execution.shares} shares at {fill.execution.price}")
-
-    trade.fillEvent += fill_event
-
 
 def print_orders():
     open_orders = ib.reqOpenOrders()
@@ -101,9 +93,7 @@ def print_orders():
             order = order_obj.order
             contract = order_obj.contract
             print(f"OrderId: {order.orderId}, "
-                  f"PermId: {order.permId}, "
                   f"ClientId: {order.clientId}, "
-                  f"Account: {order.account}, "
                   f"Symbol: {contract.symbol}, "
                   f"SecType: {contract.secType}, "
                   f"Exchange: {contract.exchange}, "
@@ -156,12 +146,17 @@ def main_menu():
             elif option == '5':
                 cancel_order()
             elif option.lower() == 'exit':
+                ib.disconnect()
                 print("Goodbye!")
                 break
             else:
                 print("Invalid option")
     except Exception as e:
         print(f"Error: {e}")
+        ib.disconnect()
 
 
-main_menu()
+if __name__ == '__main__':
+    ib = IB()
+    ib.connect('127.0.0.1', 7497, clientId=1)
+    main_menu()
