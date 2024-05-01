@@ -44,10 +44,9 @@ def plot_data(df, symbol):
 def make_contract():
     symbol = input("Enter the symbol: ")
     contract = create_contract(symbol)
-    print(f"\nContract created for symbol {contract.symbol},\n"
-          f"Details of the contract: \n"
-          f"Type: {contract.secType}, \n"
-          f"Exchange: {contract.exchange}, \n"
+    print(f"\nContract created for Symbol {contract.symbol}, "
+          f"Type: {contract.secType}, "
+          f"Exchange: {contract.exchange}, "
           f"Currency: {contract.currency}")
 
 
@@ -79,12 +78,12 @@ def place_order():
     )
     trade = ib.placeOrder(contract, order)
 
-    print(f"Order placed for {contract.symbol} \n"
-          f"Symbol: {contract.symbol}, \n"
-          f"Type: {order_type}, \n"
-          f"Action: {action}, \n"
-          f"Quantity: {quantity}, \n"
-          f"Price: {'Market' if price == 0 else price}, \n"
+    print(f"Order placed for: "
+          f"Symbol: {contract.symbol}, "
+          f"Type: {order_type}, "
+          f"Action: {action}, "
+          f"Quantity: {quantity}, "
+          f"Price: {'Market' if price == 0 else price}, "
           f"Status: {trade.orderStatus.status}")
 
     def fill_event(trade, fill):
@@ -94,15 +93,26 @@ def place_order():
 
 
 def print_orders():
-    orders = ib.openOrders()
-    if orders:
+    open_orders = ib.reqOpenOrders()
+
+    if open_orders:
         print("Open Orders:")
-        for order in orders:
-            print(f"\nOrderId: {order.orderId}, \n",
-                  f"Type: {order.orderType}, \n"
-                  f"Action: {order.action}, \n"
-                  f"Quantity: {order.totalQuantity}, \n"
-                  f"Price: {order.lmtPrice if order.orderType == 'LMT' else 'Market'}")
+        for order_obj in open_orders:
+            order = order_obj.order
+            contract = order_obj.contract
+            print(f"\nOrderId: {order.orderId}, "
+                  f"PermId: {order.permId}, "
+                  f"ClientId: {order.clientId}, "
+                  f"Account: {order.account}, "
+                  f"Symbol: {contract.symbol}, "
+                  f"SecType: {contract.secType}, "
+                  f"Exchange: {contract.exchange}, "
+                  f"Action: {order.action}, "
+                  f"OrderType: {order.orderType}, "
+                  f"TotalQty: {order.totalQuantity}, "
+                  f"CashQty: {getattr(order, 'cashQty', 'N/A')}, "
+                  f"LmtPrice: {order.lmtPrice if order.orderType == 'LMT' else 'Market'}, "
+                  f"AuxPrice: {getattr(order, 'auxPrice', 'N/A')}, ")
     else:
         print("No open orders.")
 
