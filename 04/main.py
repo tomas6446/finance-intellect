@@ -2,6 +2,24 @@ import matplotlib.pyplot as plt
 from ib_insync import IB, util, Forex, Order
 
 
+def on_fill_event(trade, fill):
+    print(f"Fill Event: Trade {trade.contract.symbol} order {trade.order.orderId} "
+          f"filled {fill.execution.shares} shares at {fill.execution.price}")
+
+
+def on_cancel_event(trade):
+    print(f"Cancel Event: Trade {trade.contract.symbol} order {trade.order.orderId} was cancelled.")
+
+
+def on_status_event(trade):
+    print(f"Status Event: Trade {trade.contract.symbol} order {trade.order.orderId} "
+          f"status changed to {trade.orderStatus.status}")
+
+
+def connect_ib():
+    ib.connect('127.0.0.1', 7497, clientId=1)
+
+
 def create_contract(symbol):
     return Forex(symbol)
 
@@ -74,6 +92,9 @@ def place_order():
         lmtPrice=price if price != 0 else None
     )
     trade = ib.placeOrder(contract, order)
+    trade.fillEvent += on_fill_event
+    trade.cancelEvent += on_cancel_event
+    trade.statusEvent += on_status_event
 
     print(f"Order placed for: "
           f"Symbol: {contract.symbol}, "
@@ -82,6 +103,7 @@ def place_order():
           f"Quantity: {quantity}, "
           f"Price: {'Market' if price == 0 else price}, "
           f"Status: {trade.orderStatus.status}")
+    ib.run()
 
 
 def print_orders():
@@ -124,6 +146,7 @@ def cancel_order():
 
 
 def main_menu():
+    connect_ib()
     try:
         while True:
             print("\nMain Menu:")
@@ -158,5 +181,4 @@ def main_menu():
 
 if __name__ == '__main__':
     ib = IB()
-    ib.connect('127.0.0.1', 7497, clientId=1)
     main_menu()
