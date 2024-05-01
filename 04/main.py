@@ -103,7 +103,8 @@ def place_order():
           f"Quantity: {quantity}, "
           f"Price: {'Market' if price == 0 else price}, "
           f"Status: {trade.orderStatus.status}")
-    ib.run()
+
+    # ib.run() runs once and disconnects
 
 
 def print_orders():
