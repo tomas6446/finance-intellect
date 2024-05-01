@@ -123,9 +123,9 @@ def print_orders():
                   f"Action: {order.action}, "
                   f"OrderType: {order.orderType}, "
                   f"TotalQty: {order.totalQuantity}, "
-                  f"CashQty: {getattr(order, 'cashQty', 'N/A')}, "
+                  f"CashQty: {getattr(order, 'cashQty')}, "
                   f"LmtPrice: {order.lmtPrice if order.orderType == 'LMT' else 'Market'}, "
-                  f"AuxPrice: {getattr(order, 'auxPrice', 'N/A')}, ")
+                  f"AuxPrice: {getattr(order, 'auxPrice')}, ")
     else:
         print("No open orders.")
 
