@@ -49,7 +49,7 @@ def trend_following(data, window, take_profit, stop_loss):
 
 def optimize_strategy(data, take_profit, stop_loss):
     best_return = -np.inf
-    best_short_window, best_long_window = None, None
+    best_window = None
     best_data = None
 
     for short_window in range(5, 50, 5):
@@ -62,8 +62,6 @@ def optimize_strategy(data, take_profit, stop_loss):
 
             if strategy_return > best_return:
                 best_return = strategy_return
-                best_short_window = short_window
-                best_long_window = long_window
+                best_window = window
                 best_data = strategy_data
-    best_window = (best_short_window, best_long_window)
     return best_data, best_window, best_return
