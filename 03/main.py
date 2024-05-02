@@ -15,14 +15,14 @@ stop_loss = 0.01
 
 def main():
     strategy_data, strategy_return = trend_following(data.copy(), window, take_profit, stop_loss)
-    plot_data(strategy_data, ticker)
+    plot_data(strategy_data, ticker, window)
     print(f"Window: {window}")
     print(f"Strategy Return: {strategy_return.iloc[-1]}")
 
     optimized_data, optimized_window, best_return = optimize_strategy(data.copy(), take_profit, stop_loss)
     print(f"Optimized Window: {optimized_window}")
     print(f"Best Return: {best_return}")
-    plot_data(optimized_data, ticker)
+    plot_data(optimized_data, ticker, optimized_window)
 
     plot_comparison(strategy_data['Strategy_Return'], optimized_data['Strategy_Return'])
 

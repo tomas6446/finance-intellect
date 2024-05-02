@@ -39,7 +39,7 @@ def trend_following(data, window, take_profit, stop_loss):
                     adjusted_return = change
 
                 data.at[data.index[i], 'Strategy_Return'] = adjusted_return
-                data.loc[data.index[i], 'Sell'] = current_price
+                data.at[data.index[i], 'Sell'] = current_price
                 position_open_price = None
 
     data['Cumulative_Strategy_Return'] = data['Strategy_Return'].cumsum()

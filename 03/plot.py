@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 
 
-def plot_data(data, ticker):
+def plot_data(data, ticker, window):
     plt.figure(figsize=(14, 7))
     plt.plot(data['Close'], label='Close Price', color='green', alpha=1)
     if 'SMA_short' in data.columns and 'SMA_long' in data.columns:
@@ -13,7 +13,7 @@ def plot_data(data, ticker):
         plt.scatter(data.index, data['Buy'], label='Buy Signal', marker='^', color='green', s=100, alpha=1)
         plt.scatter(data.index, data['Sell'], label='Sell Signal', marker='v', color='red', s=100, alpha=1)
 
-    plt.title(f'{ticker} Close Price')
+    plt.title(f'{ticker} Close Price with {window} SMA')
     plt.xlabel('Date')
     plt.ylabel('Price')
     plt.legend()
