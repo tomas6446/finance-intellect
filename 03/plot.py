@@ -18,3 +18,18 @@ def plot_data(data, ticker):
     plt.ylabel('Price')
     plt.legend()
     plt.show()
+
+
+def plot_comparison(original_return, optimized_return):
+    original_ratio = (252 ** 0.5) * (original_return.mean() / original_return.std())
+    optimized_ratio = (252 ** 0.5) * (optimized_return.mean() / optimized_return.std())
+
+    plt.figure(figsize=(14, 7))
+    plt.plot(original_return, label=f'Original: Sharpe Ratio = {original_ratio:.2f}', color='blue')
+    plt.plot(optimized_return, label=f'Optimized: Sharpe Ratio = {optimized_ratio:.2f}', color='green')
+
+    plt.title('Sharpe Ratio Comparison: Original vs. Optimized Strategies')
+    plt.xlabel('Date')
+    plt.ylabel('Cumulative Returns')
+    plt.legend()
+    plt.show()
