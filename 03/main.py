@@ -1,7 +1,7 @@
 import yfinance as yf
 
 from plot import plot_data
-from strategy import trend_following
+from strategy import trend_following, optimize_strategy
 
 ticker = "AAPL"
 start_date = "2020-01-01"
@@ -14,9 +14,12 @@ stop_loss = 0.01
 
 
 def main():
-    new_data, _ = trend_following(data, window, take_profit, stop_loss)
-    plot_data(new_data, ticker)
+    strategy_data, strategy_return = trend_following(data.copy(), window, take_profit, stop_loss)
+    plot_data(strategy_data, ticker)
 
+    optimized_data, optimized_window, best_return = optimize_strategy(data.copy(), take_profit, stop_loss)
+    plot_data(optimized_data, ticker)
 
+    plot_sharpe(strategy_data, window, optimized_window)
 if __name__ == "__main__":
     main()

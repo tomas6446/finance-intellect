@@ -44,3 +44,25 @@ def trend_following(data, window, take_profit, stop_loss):
 
     data['Cumulative_Strategy_Return'] = data['Strategy_Return'].cumsum()
     return data, data['Cumulative_Strategy_Return']
+
+
+def optimize_strategy(data, take_profit, stop_loss):
+    best_return = -np.inf
+    best_short_window, best_long_window = None, None
+    best_data = None
+
+    for short_window in range(5, 50, 5):
+        for long_window in range(50, 200, 5):
+            if short_window >= long_window:
+                continue
+            window = (short_window, long_window)
+            strategy_data, strategy_return = trend_following(data.copy(), window, take_profit, stop_loss)
+
+            strategy_return = strategy_return.iloc[-1]
+            if strategy_return > best_return:
+                best_return = strategy_return
+                best_short_window = short_window
+                best_long_window = long_window
+                best_data = strategy_data
+    best_window = (best_short_window, best_long_window)
+    return best_data, best_window, best_return
