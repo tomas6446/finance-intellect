@@ -22,9 +22,6 @@ def on_realtime_update(data):
         f"  Time: {data.time.strftime('%Y-%m-%d %H:%M:%S')}\n"
         f"  Bid: {data.bid}\n"
         f"  Ask: {data.ask}\n"
-        f"  Last: {data.last}\n"
-        f"  Volume: {data.volume}\n"
-        f"  Open: {data.open}\n"
         f"  High: {data.high}\n"
         f"  Low: {data.low}"
     )
