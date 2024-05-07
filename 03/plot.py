@@ -20,7 +20,7 @@ def plot_data(data, ticker, window):
     plt.show()
 
 
-def plot_comparison(original_return, optimized_return):
+def plot_buy_sell_comparison(original_return, optimized_return):
     original_ratio = (252 ** 0.5) * (original_return.mean() / original_return.std())
     optimized_ratio = (252 ** 0.5) * (optimized_return.mean() / optimized_return.std())
 
