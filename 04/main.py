@@ -16,8 +16,18 @@ def on_status_event(trade):
           f"status changed to {trade.orderStatus.status}")
 
 
-def on_realtime_update(trade, msg):
-    print(f"Real-time Update: {trade.contract.symbol} {msg.field} price: {msg.price}")
+def on_realtime_update(data):
+    print(
+        f"Real-time Update - {data.contract.symbol}\n"
+        f"  Time: {data.time.strftime('%Y-%m-%d %H:%M:%S')}\n"
+        f"  Bid: {data.bid}\n"
+        f"  Ask: {data.ask}\n"
+        f"  Last: {data.last}\n"
+        f"  Volume: {data.volume}\n"
+        f"  Open: {data.open}\n"
+        f"  High: {data.high}\n"
+        f"  Low: {data.low}"
+    )
 
 
 def connect_ib():
@@ -53,14 +63,11 @@ def fetch_real_time_data():
     contract = create_contract(symbol)
 
     # Request market data
-    bars = ib.reqMktData(contract, '', False, False)
-    bars.updateEvent += on_realtime_update
+    data = ib.reqMktData(contract, genericTickList='', snapshot=False)
+    data.updateEvent += on_realtime_update
 
     print(f"Subscribed to real-time market data for {contract.symbol}. Press CTRL+C to stop.")
     try:
-        if bars:
-            df = util.df(bars)
-            plot_data(df, symbol)
         ib.run()
     except KeyboardInterrupt:
         print("Stopped real-time market data subscription.")
