@@ -110,24 +110,9 @@ def place_order():
 def print_orders():
     open_orders = ib.reqOpenOrders()
 
-    if open_orders:
-        print("Open Orders:")
-        for order_obj in open_orders:
-            order = order_obj.order
-            contract = order_obj.contract
-            print(f"OrderId: {order.orderId}, "
-                  f"ClientId: {order.clientId}, "
-                  f"Symbol: {contract.symbol}, "
-                  f"SecType: {contract.secType}, "
-                  f"Exchange: {contract.exchange}, "
-                  f"Action: {order.action}, "
-                  f"OrderType: {order.orderType}, "
-                  f"TotalQty: {order.totalQuantity}, "
-                  f"CashQty: {getattr(order, 'cashQty')}, "
-                  f"LmtPrice: {order.lmtPrice if order.orderType == 'LMT' else 'Market'}, "
-                  f"AuxPrice: {getattr(order, 'auxPrice')}, ")
-    else:
-        print("No open orders.")
+    print("Open Orders:")
+    for order in open_orders:
+        print(order.orderStatus.status, order.contract.symbol)
 
 
 def cancel_order():

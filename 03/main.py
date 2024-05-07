@@ -5,7 +5,7 @@ from strategy import trend_following, optimize_strategy
 
 ticker = "AAPL"
 start_date = "2020-01-01"
-end_date = "2022-01-01"
+end_date = "2021-01-01"
 data = yf.download(ticker, start=start_date, end=end_date)
 
 window = (10, 50)
