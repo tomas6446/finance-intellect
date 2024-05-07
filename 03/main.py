@@ -1,7 +1,7 @@
 import yfinance as yf
-
+import matplotlib.pyplot as plt
 from plot import plot_data, plot_buy_sell_comparison
-from strategy import trend_following, optimize_strategy
+from strategy import calculate_return, optimize_strategy, bollinger_bands_strategy
 
 ticker = "AAPL"
 start_date = "2020-01-01"
@@ -13,8 +13,9 @@ take_profit = 0.05
 stop_loss = 0.01
 
 
-def main():
-    strategy_data, strategy_cumulative_return, strategy_return = trend_following(data.copy(), window, take_profit, stop_loss)
+def main(data):
+    data = bollinger_bands_strategy(data.copy(), window)
+    strategy_data, strategy_cumulative_return, strategy_return = calculate_return(data.copy(), take_profit, stop_loss)
     plot_data(strategy_data.copy(), ticker, window)
     print(f"Window: {window}")
     print(f"Strategy Return: {strategy_cumulative_return.iloc[-1]}")
@@ -28,4 +29,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(data)

@@ -1,19 +1,18 @@
 import numpy as np
 
 
-def bollinger_bands(data, window):
+def bollinger_bands_strategy(data, window):
     short_window, long_window = window
     data['SMA_short'] = data['Close'].rolling(window=short_window).mean()
     data['SMA_long'] = data['Close'].rolling(window=long_window).mean()
     data.dropna(inplace=True)
-
-
-def trend_following(data, window, take_profit, stop_loss):
-    bollinger_bands(data, window)
-
     data['Signal'] = np.where(data['SMA_short'] > data['SMA_long'], 1, -1)
     data['Buy'] = np.where((data['Signal'] == 1) & (data['Signal'].shift(1) == -1), data['Close'], np.nan)
     data['Sell'] = np.nan
+    return data
+
+
+def calculate_return(data, take_profit, stop_loss):
     data['Strategy_Return'] = 0.0
     position_open_price = None
     for i in range(1, len(data)):
@@ -50,16 +49,16 @@ def trend_following(data, window, take_profit, stop_loss):
 def optimize_strategy(data, take_profit, stop_loss):
     best_cumulative_return = 0.0
     best_strategy_return = 0.0
-    best_window = None
-    best_data = None
-    best_cumulative_return_series = None
+    best_window = (10, 50)
+    best_data = data
+    best_cumulative_return_series = 0.0
 
     for short_window in range(5, 50, 5):
         for long_window in range(50, 200, 5):
             if short_window >= long_window:
                 continue
             window = (short_window, long_window)
-            strategy_data, cumulative_strategy_return, strategy_return = trend_following(data.copy(), window, take_profit, stop_loss)
+            strategy_data, cumulative_strategy_return, strategy_return = calculate_return(data.copy(), take_profit, stop_loss)
             last_cumulative_return = cumulative_strategy_return.iloc[-1]
 
             if last_cumulative_return > best_cumulative_return:
@@ -68,6 +67,4 @@ def optimize_strategy(data, take_profit, stop_loss):
                 best_window = window
                 best_data = strategy_data
                 best_cumulative_return_series = cumulative_strategy_return
-
     return best_data, best_window, best_cumulative_return_series, best_strategy_return
-
