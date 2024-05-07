@@ -190,6 +190,7 @@ def main_menu():
         print(f"Error: {e}")
         ib.disconnect()
 
+
 if __name__ == '__main__':
     ib = IB()
     main_menu()

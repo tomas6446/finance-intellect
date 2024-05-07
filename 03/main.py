@@ -25,7 +25,6 @@ def main():
     print(f"Best Return: {optimized_cumulative_return.iloc[-1]}")
 
     plot_buy_sell_comparison(strategy_return, optimized_return)
-    plot_sharpe(strategy_cumulative_return, optimized_cumulative_return)
 
 
 if __name__ == "__main__":
