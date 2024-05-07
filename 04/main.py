@@ -16,6 +16,10 @@ def on_status_event(trade):
           f"status changed to {trade.orderStatus.status}")
 
 
+def on_realtime_update(trade, msg):
+    print(f"Real-time Update: {trade.contract.symbol} {msg.field} price: {msg.price}")
+
+
 def connect_ib():
     ib.connect('127.0.0.1', 7497, clientId=1)
 
@@ -42,6 +46,25 @@ def fetch_and_visualize(symbol, duration, bar_size):
     if bars:
         df = util.df(bars)
         plot_data(df, symbol)
+
+
+def fetch_real_time_data():
+    symbol = input("Enter the symbol for real-time data: ")
+    contract = create_contract(symbol)
+
+    # Request market data
+    bars = ib.reqMktData(contract, '', False, False)
+    bars.updateEvent += on_realtime_update
+
+    print(f"Subscribed to real-time market data for {contract.symbol}. Press CTRL+C to stop.")
+    try:
+        if bars:
+            df = util.df(bars)
+            plot_data(df, symbol)
+        ib.run()
+    except KeyboardInterrupt:
+        print("Stopped real-time market data subscription.")
+        ib.cancelMktData(contract)
 
 
 def plot_data(df, symbol):
@@ -141,6 +164,7 @@ def main_menu():
             print("3. Place Order")
             print("4. Print Orders")
             print("5. Cancel Order")
+            print("6. Real-Time Data")
             print("Type 'exit' to quit")
             option = input("Choose an option: ")
 
@@ -154,6 +178,8 @@ def main_menu():
                 print_orders()
             elif option == '5':
                 cancel_order()
+            elif option == '6':
+                fetch_real_time_data()
             elif option.lower() == 'exit':
                 ib.disconnect()
                 print("Goodbye!")
@@ -163,7 +189,6 @@ def main_menu():
     except Exception as e:
         print(f"Error: {e}")
         ib.disconnect()
-
 
 if __name__ == '__main__':
     ib = IB()

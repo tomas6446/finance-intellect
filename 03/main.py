@@ -1,6 +1,6 @@
 import yfinance as yf
 
-from plot import plot_data, plot_sharpe, plot_buy_sell_comparison
+from plot import plot_data, plot_buy_sell_comparison
 from strategy import trend_following, optimize_strategy
 
 ticker = "AAPL"
