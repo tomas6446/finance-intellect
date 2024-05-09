@@ -21,6 +21,7 @@ data_dict = {
 window = (10, 50)
 take_profit = 0.05
 stop_loss = 0.01
+initial_investment_per_stock = 1000
 
 
 def run(ticker):
@@ -102,6 +103,8 @@ if __name__ == "__main__":
     all_optimised_returns = []
     all_returns = []
     daily_returns = {}
+    final_investment_values = []
+
     for ticker in tickers:
         print(f"Running strategy for {ticker}...")
         (fig, ax), strategy_return, optimised_strategy_returns, daily_return = run(ticker)
@@ -110,7 +113,12 @@ if __name__ == "__main__":
         all_returns.append(strategy_return)
         daily_returns[ticker] = daily_return
 
+        final_investment_value = initial_investment_per_stock * (1 + optimised_strategy_returns.iloc[-1])
+        final_investment_values.append(final_investment_value)
+
     combine_plots(figs_axes)
     plot_combined_returns(pd.DataFrame(all_optimised_returns).mean(axis=0))
     plot_combined_returns(pd.DataFrame(all_returns).mean(axis=0))
     plot_correlation(daily_returns)
+
+    print(f"Total Investment Value: {sum(final_investment_values):.2f}")
