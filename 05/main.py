@@ -6,6 +6,7 @@ import pandas as pd
 import yfinance as yf
 
 plot_data = importlib.import_module("03.plot").plot_data
+calculate_return = importlib.import_module("03.strategy").calculate_return
 bollinger_bands_strategy = importlib.import_module("03.strategy").bollinger_bands_strategy
 optimize_strategy = importlib.import_module("03.strategy").optimize_strategy
 
@@ -30,20 +31,22 @@ def run(ticker):
         return
 
     print(data.head())
-
-    strategy_data, optimized_window, strategy_cumulative_return, strategy_return = optimize_strategy(
+    _, strategy_cumulative_return, _ = calculate_return(
+        data.copy(), window, take_profit, stop_loss
+    )
+    strategy_data, optimized_window, optimised_strategy_cumulative_return, optimised_strategy_return = optimize_strategy(
         data.copy(), take_profit, stop_loss
     )
 
     print(f"Ticker: {ticker}")
     print(f"Optimized Window: {optimized_window}")
-    print(f"Strategy Cumulative Return: {strategy_cumulative_return.iloc[-1]:.4f}")
-    print(f"Strategy Sharpe Ratio: {(strategy_return.mean() / strategy_return.std()):.4f}")
+    print(f"Strategy Cumulative Return: {optimised_strategy_cumulative_return.iloc[-1]:.4f}")
+    print(f"Strategy Sharpe Ratio: {(optimised_strategy_return.mean() / optimised_strategy_return.std()):.4f}")
     print("-" * 50)
 
     (fix, ax) = plot_data(strategy_data, ticker, window)
     daily_return = data['Close'].pct_change().dropna()
-    return (fix, ax), strategy_cumulative_return, daily_return
+    return (fix, ax), strategy_cumulative_return, optimised_strategy_cumulative_return, daily_return
 
 
 def combine_plots(figs_axes):
@@ -96,15 +99,18 @@ def plot_correlation(data):
 
 if __name__ == "__main__":
     figs_axes = []
+    all_optimised_returns = []
     all_returns = []
     daily_returns = {}
     for ticker in tickers:
         print(f"Running strategy for {ticker}...")
-        (fig, ax), strategy_returns, daily_return = run(ticker)
+        (fig, ax), strategy_return, optimised_strategy_returns, daily_return = run(ticker)
         figs_axes.append((fig, ax))
-        all_returns.append(strategy_returns)
+        all_optimised_returns.append(optimised_strategy_returns)
+        all_returns.append(strategy_return)
         daily_returns[ticker] = daily_return
 
     combine_plots(figs_axes)
+    plot_combined_returns(pd.DataFrame(all_optimised_returns).mean(axis=0))
     plot_combined_returns(pd.DataFrame(all_returns).mean(axis=0))
     plot_correlation(daily_returns)
