@@ -1,5 +1,6 @@
 import importlib
-
+import numpy as np
+import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 import yfinance as yf
@@ -40,7 +41,10 @@ def run(ticker):
     print(f"Strategy Cumulative Return: {strategy_cumulative_return.iloc[-1]:.4f}")
     print(f"Strategy Sharpe Ratio: {(strategy_return.mean() / strategy_return.std()):.4f}")
     print("-" * 50)
-    return plot_data(strategy_data, ticker, window)
+
+    (fix, ax) = plot_data(strategy_data, ticker, window)
+    daily_return = data['Close'].pct_change().dropna()
+    return (fix, ax), strategy_cumulative_return, daily_return
 
 
 def combine_plots(figs_axes):
@@ -72,6 +76,40 @@ def combine_plots(figs_axes):
     plt.show()
 
 
+def plot_combined_returns(portfolio_returns):
+    plt.figure(figsize=(10, 6))
+    plt.plot(portfolio_returns.index, portfolio_returns, label='Combined Portfolio Returns')
+    plt.title('Combined Portfolio Profit Curve')
+    plt.xlabel('Date')
+    plt.ylabel('Cumulative Returns')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+
+def plot_correlation(data):
+    returns_df = pd.DataFrame(data)
+    corr = returns_df.corr()
+    sns.set_theme(style="white")
+    f, ax = plt.subplots(figsize=(11, 9))
+    cmap = sns.diverging_palette(230, 20, as_cmap=True)
+    mask = np.triu(np.ones_like(corr, dtype=bool))
+    sns.heatmap(corr, mask=mask, cmap=cmap, vmax=.3, center=0,
+                square=True, linewidths=.5, cbar_kws={"shrink": .5})
+    plt.show()
+
+
 if __name__ == "__main__":
-    figs_axes = [run(ticker) for ticker in tickers]
+    figs_axes = []
+    all_returns = []
+    daily_returns = {}
+    for ticker in tickers:
+        print(f"Running strategy for {ticker}...")
+        (fig, ax), strategy_returns, daily_return = run(ticker)
+        figs_axes.append((fig, ax))
+        all_returns.append(strategy_returns)
+        daily_returns[ticker] = daily_return
+
     combine_plots(figs_axes)
+    plot_combined_returns(pd.DataFrame(all_returns).mean(axis=0))
+    plot_correlation(daily_returns)
