@@ -12,7 +12,8 @@ def bollinger_bands_strategy(data, window):
     return data
 
 
-def calculate_return(data, take_profit, stop_loss):
+def calculate_return(data, window, take_profit, stop_loss):
+    bollinger_bands_strategy(data, window)
     data['Strategy_Return'] = 0.0
     position_open_price = None
     for i in range(1, len(data)):
@@ -58,7 +59,7 @@ def optimize_strategy(data, take_profit, stop_loss):
             if short_window >= long_window:
                 continue
             window = (short_window, long_window)
-            strategy_data, cumulative_strategy_return, strategy_return = calculate_return(data.copy(), take_profit, stop_loss)
+            strategy_data, cumulative_strategy_return, strategy_return = calculate_return(data.copy(), window, take_profit, stop_loss)
             last_cumulative_return = cumulative_strategy_return.iloc[-1]
 
             if last_cumulative_return > best_cumulative_return:

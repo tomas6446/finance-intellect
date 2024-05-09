@@ -31,9 +31,8 @@ def run(ticker):
 
     print(data.head())
 
-    strategy_data = bollinger_bands_strategy(data.copy(), window)
     strategy_data, optimized_window, strategy_cumulative_return, strategy_return = optimize_strategy(
-        strategy_data, take_profit, stop_loss
+        data.copy(), take_profit, stop_loss
     )
 
     print(f"Ticker: {ticker}")
@@ -53,18 +52,14 @@ def combine_plots(figs_axes):
     cols = 3
     rows = -(-num_plots // cols)
 
-    combined_fig, axs = plt.subplots(rows, cols, figsize=(20, 13))
+    _, axs = plt.subplots(rows, cols, figsize=(20, 13))
 
     for idx, (fig, ax) in enumerate(valid_figs_axes):
         row_idx = idx // cols
         col_idx = idx % cols
+
         for line in ax.get_lines():
             axs[row_idx, col_idx].plot(line.get_xdata(), line.get_ydata(), label=line.get_label(), color=line.get_color())
-
-        for scatter in ax.collections:
-            offsets = scatter.get_offsets()
-            colors = scatter.get_facecolor()
-            axs[row_idx, col_idx].scatter(offsets[:, 0], offsets[:, 1], color=colors, label=scatter.get_label())
 
         axs[row_idx, col_idx].legend()
         axs[row_idx, col_idx].set_title(ax.get_title())

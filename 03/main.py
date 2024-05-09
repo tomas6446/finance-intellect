@@ -14,8 +14,7 @@ stop_loss = 0.01
 
 
 def main(data):
-    data = bollinger_bands_strategy(data.copy(), window)
-    strategy_data, strategy_cumulative_return, strategy_return = calculate_return(data.copy(), take_profit, stop_loss)
+    strategy_data, strategy_cumulative_return, strategy_return = calculate_return(data.copy(), window, take_profit, stop_loss)
     plot_data(strategy_data.copy(), ticker, window)
     print(f"Window: {window}")
     print(f"Strategy Return: {strategy_cumulative_return.iloc[-1]}")
