@@ -89,7 +89,7 @@ def plot_correlation(data):
     returns_df = pd.DataFrame(data)
     corr = returns_df.corr()
     sns.set_theme(style="white")
-    f, ax = plt.subplots(figsize=(11, 9))
+    _, _ = plt.subplots(figsize=(11, 9))
     cmap = sns.diverging_palette(230, 20, as_cmap=True)
     mask = np.triu(np.ones_like(corr, dtype=bool))
     sns.heatmap(corr, mask=mask, cmap=cmap, vmax=.3, center=0,
