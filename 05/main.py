@@ -46,8 +46,7 @@ def run(ticker):
     print("-" * 50)
 
     (fix, ax) = plot_data(strategy_data, ticker, window)
-    daily_return = data['Close'].pct_change().dropna()
-    return (fix, ax), strategy_cumulative_return, optimised_strategy_cumulative_return, daily_return
+    return (fix, ax), strategy_cumulative_return, optimised_strategy_cumulative_return, optimised_strategy_return
 
 
 def combine_plots(figs_axes):
@@ -91,10 +90,10 @@ def plot_correlation(data):
     corr = returns_df.corr()
     sns.set_theme(style="white")
     _, _ = plt.subplots(figsize=(11, 9))
-    cmap = sns.diverging_palette(230, 20, as_cmap=True)
+    cmap = sns.diverging_palette(255, 0, as_cmap=True)
     mask = np.triu(np.ones_like(corr, dtype=bool))
     sns.heatmap(corr, mask=mask, cmap=cmap, vmax=.3, center=0,
-                square=True, linewidths=.5, cbar_kws={"shrink": .5})
+                square=True, linewidths=.5, cbar_kws={"shrink": .5}, annot=True)
     plt.show()
 
 
